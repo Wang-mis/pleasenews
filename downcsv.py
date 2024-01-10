@@ -140,19 +140,22 @@ def mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_s
             sub_dfs.append(pd.read_csv(ele_dir_path + csv, delimiter='\t'))
         
         result = pd.concat(sub_dfs)
-        # result.to_csv(merge_save + ele_dir + ".mentions.csv", index=False)
         
-        # process_df = pd.read_csv(export_path + "_".join(filter) +"_" + ele_dir + ".csv")
         process_df = pd.read_csv(export_path + ele_dir + ".export.CSV", delimiter='\t')
         
         process_df = process(process_df, filter=filter)
 
-        data = pd.merge(process_df,result,how='inner',on='GlobalEventID')
+        data = pd.merge(process_df, result, how='inner', on='GlobalEventID')
         # data = pd.merge(process_df,result,how='left',on='GlobalEventID')
 
-        data.sort_values(['MentionIdentifier','Confidence'],ascending=[1,0],inplace=True)
+        # 排序规则：MentionIdentifier升序, SentenceID升序, Confidence 降序
+        data.sort_values(['MentionIdentifier', 'SentenceID', 'Confidence'], ascending=[1, 1, 0], inplace=True)
         grouped = data.groupby(['MentionIdentifier']).head(1)
-        grouped = grouped[grouped["Confidence"]>=40]
+        grouped = grouped[grouped["Confidence"]>=75]
+        grouped = grouped[grouped["SentenceID"]==1]
+
+        # 只看yahoo.com的
+        grouped = grouped[grouped["MentionSourceName"]=='yahoo.com']
         # grouped.to_csv("grouped.csv", index=False)
         
         grouped.to_csv(merge_save + ele_dir + ".merge.csv", index=False)
@@ -169,10 +172,10 @@ def downloadMentions(day, withhead=True, filedir='./csv/', download="mentions"):
 
 
 if __name__ == "__main__":
-    TIME_RANGE = [20240109,20240109]
+    TIME_RANGE = [20240101,20240109]
 
-    # for i in create_date_range(TIME_RANGE):
-    #     downloadExport(i, filedir='./export/')
-    #     downloadMentions(i, filedir='./mentions/')
+    for i in create_date_range(TIME_RANGE):
+        downloadExport(i, filedir='./export/')
+        downloadMentions(i, filedir='./mentions/')
     
     mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_save= "./merge/", filter=["CHN","CHN"])

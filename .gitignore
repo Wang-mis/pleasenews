@@ -11,3 +11,8 @@ db.sqlite3-journal
 
 # Jupyter Notebook
 .ipynb_checkpoints
+
+
+export/**
+
+mentions/**

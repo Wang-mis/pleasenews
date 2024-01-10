@@ -14,6 +14,10 @@ from utils import export_head, mentions_head, times
 import warnings
 warnings.filterwarnings("ignore")
 
+os.environ['HTTPS_PROXY'] = 'http://127.0.0.1:1080'
+os.environ["HTTP_PROXY"] = 'http://127.0.0.1:1080'
+
+
 def create_date_range(inp:list):
     result_list = []
     sta_day = datetime.strptime(str(inp[0]), '%Y%m%d')
@@ -98,14 +102,9 @@ def specificDay(string, withhead=False, filedir="./csv/", download="export"):
     except Exception as e:
         print("Exception: ",e)
 
+def process(tmp, filter=['RUS', 'UKR']):
 
-def process(string, source='./csv/', target='./process/', filter=['RUS', 'UKR']):
     print("|".join(filter))
-    
-    if not os.path.exists(target):
-        os.makedirs(target)
-
-    tmp = pd.read_csv(source + string+".export.CSV", delimiter='\t')
     
     actor1_country_code_rus_ukr_bool = tmp.Actor1CountryCode.str.contains("|".join(filter), na=False)
     Actor1CountryCode_RUS_UKR = tmp[actor1_country_code_rus_ukr_bool]
@@ -116,19 +115,64 @@ def process(string, source='./csv/', target='./process/', filter=['RUS', 'UKR'])
     Actor2CountryCode_RUS_UKR = Actor2CountryCode_RUS_UKR.reset_index(drop=True)
 
     concat_df = pd.concat([Actor1CountryCode_RUS_UKR,Actor2CountryCode_RUS_UKR]).reset_index(drop=True)
-    concat_df = concat_df.drop_duplicates(subset=export_head[5:-2],keep='first')
-    concat_df = concat_df.dropna(axis=0,subset = ["Actor1Code", "Actor2Code", "Actor1CountryCode", "Actor2CountryCode"])
-    concat_df = concat_df.dropna(axis=0,subset = ["ActionGeo_Fullname", "ActionGeo_CountryCode"])
-    
-    concat_df.to_csv(target + "_".join(filter) + '_' + string+ '.csv', index=False)
+    concat_df = concat_df.drop_duplicates(subset=export_head[5:-2], keep='first')
+    concat_df = concat_df.dropna(axis=0, subset=["Actor1Code", "Actor2Code", "Actor1CountryCode", "Actor2CountryCode"])
+    concat_df = concat_df.dropna(axis=0, subset=["ActionGeo_Fullname", "ActionGeo_CountryCode"])
 
+    return concat_df
+
+
+def mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_save= "./merge/", filter=["RUS","UKR"]):
+    merge_save += "_".join(filter) +"/"
+
+    if not os.path.exists(merge_save):
+        os.makedirs(merge_save)
+
+    mention_dir = os.listdir(mention_path)
+
+    for ele_dir in mention_dir:
+        ele_dir_path = mention_path + ele_dir + "/"
+        sub_dfs = []
+        for csv in os.listdir(ele_dir_path):
+            if csv.split(".")[-1].lower() != 'csv':
+                print(csv)
+                continue
+            sub_dfs.append(pd.read_csv(ele_dir_path + csv, delimiter='\t'))
+        
+        result = pd.concat(sub_dfs)
+        # result.to_csv(merge_save + ele_dir + ".mentions.csv", index=False)
+        
+        # process_df = pd.read_csv(export_path + "_".join(filter) +"_" + ele_dir + ".csv")
+        process_df = pd.read_csv(export_path + ele_dir + ".export.CSV", delimiter='\t')
+        
+        process_df = process(process_df, filter=filter)
+
+        data = pd.merge(process_df,result,how='inner',on='GlobalEventID')
+        # data = pd.merge(process_df,result,how='left',on='GlobalEventID')
+
+        data.sort_values(['MentionIdentifier','Confidence'],ascending=[1,0],inplace=True)
+        grouped = data.groupby(['MentionIdentifier']).head(1)
+        grouped = grouped[grouped["Confidence"]>=40]
+        # grouped.to_csv("grouped.csv", index=False)
+        
+        grouped.to_csv(merge_save + ele_dir + ".merge.csv", index=False)
+
+
+
+def downloadExport(day, withhead=True, filedir='./csv/', download="export"):
+    specificDay(string=day, withhead=withhead, filedir=filedir, download=download)
+
+
+def downloadMentions(day, withhead=True, filedir='./csv/', download="mentions"):
+    for time in times:
+        specificDay(string=day + time, withhead=withhead, filedir=filedir, download=download)
 
 
 if __name__ == "__main__":
-    TIME_RANGE = [20240108,20240109]
-    source='./csv/'
-    # download="export"
-    download="mentions"
-    for i in create_date_range(TIME_RANGE):
-        for time in times:
-            specificDay(string=i+time, withhead=True, filedir =source, download=download)
+    TIME_RANGE = [20240109,20240109]
+
+    # for i in create_date_range(TIME_RANGE):
+    #     downloadExport(i, filedir='./export/')
+    #     downloadMentions(i, filedir='./mentions/')
+    
+    mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_save= "./merge/", filter=["CHN","CHN"])

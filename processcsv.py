@@ -39,6 +39,8 @@ def mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_s
         os.makedirs(merge_save)
 
     mention_dir = os.listdir(mention_path)
+    
+    sub_merge_dfs = []
 
     for ele_dir in mention_dir:
         ele_dir_path = mention_path + ele_dir + "/"
@@ -75,6 +77,12 @@ def mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_s
         # grouped.to_csv("grouped.csv", index=False)
         
         grouped.to_csv(merge_save + ele_dir + ".merge.csv", index=False)
+        sub_merge_dfs.append(grouped)
+    
+    # 合并所有的merge.csv
+    all_merge_dfs = pd.concat(sub_merge_dfs)
+    ele_dir = mention_dir[0] + '_' + mention_dir[-1]
+    all_merge_dfs.to_csv(merge_save + ele_dir + ".merge.csv", index=False)
 
 
 if __name__ == "__main__":

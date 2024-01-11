@@ -26,7 +26,8 @@ PROXIES= {
 }
 
 headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
+    # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0'
 }
 
 # MERGE Mention 数据集位置
@@ -245,7 +246,7 @@ if __name__ == "__main__":
     print(PROCESS_GDELT_PATH)
 
     same_struct_domain_list = [
-        "yahoo.com"
+        "bbc.com"
     ]
 
     for tmp_domain in same_struct_domain_list:
@@ -257,39 +258,35 @@ if __name__ == "__main__":
         div_article = 'article'
         # div_article = 'div'
         div_attrs = {
-            # "id": "article-content"
-            # "data-testid" : "article-body"
-            # 'id': 'artikelTextPuffer'
-            # 'itemprop': "description"
-            # "itemprop" : "articleBody"
-            # "class" : re.compile("default__ArticleBody")
-            # "class" : "single-article-text"
-            # "class" : "tdb-block-inner"
-            # "id" : "ContentPlaceHolder1_divContent"
-            "class" : "caas-container"
-            # "data-test-id" : "article-content"
+            # "class" : "live-feed"
+            # "data-testid": "live-blog-content"
+            # "role": "article"
         }
         # ==================================================================== #
         h_in = False
         h_in = True
         h_x = 'h1'
         h_attrs = {
+            # "data-testid": "headline"
             # "class" : re.compile('Component-heading')
         }
 
         a_x = 'div'
         a_attrs = {
-            "class" : "caas-attr-item-author"
+            "class" : "ssrcss-68pt20-Text-TextContributorName e8mq1e96"
         }
 
         t_x = 'div'
         t_attrs = {
-            "class" : "caas-attr-time-style"
+            "class" : "ssrcss-m5j4pi-MetadataContent eh44mf00"
         }
         
         find_p = 'p'
         p_attrs = {
             # "data-text" : "true"
+            # "role": "article"
+            # "class": "ssrcss-11r1m41-RichTextComponentWrapper ep2nwvo0"
+            # "data-component": "text-block"
         }
 
 

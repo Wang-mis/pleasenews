@@ -1,0 +1,22 @@
+{
+    "div_article": "article",
+    "div_attrs": {
+    },
+    "h_in": "True",
+    "h_x": "h1",
+    "h_attrs":{
+
+    },
+    "a_x": "div",
+    "a_attrs":{
+        "class" : "ssrcss-68pt20-Text-TextContributorName e8mq1e96"
+    },
+    "t_x": "div",
+    "t_attrs":{
+        "class" : "ssrcss-m5j4pi-MetadataContent eh44mf00"
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

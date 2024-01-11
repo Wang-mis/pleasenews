@@ -246,7 +246,7 @@ if __name__ == "__main__":
     print(PROCESS_GDELT_PATH)
 
     same_struct_domain_list = [
-        "bbc.com"
+        "bbc.co.uk"
     ]
 
     for tmp_domain in same_struct_domain_list:

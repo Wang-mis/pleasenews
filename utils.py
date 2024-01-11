@@ -181,3 +181,17 @@ times = [
 '233000',
 '234500'
 ]
+
+
+MEDIUMLIST = [
+    'abcnews.go.com',
+    'yahoo.com',
+    'cnn.com',
+    'foxnews.com',
+    'europesun.com',
+    'dailymail.co.uk',
+    'bbc.com',
+    'bbc.co.uk',
+    'washingtonpost.com',
+    'nytimes.com'
+]

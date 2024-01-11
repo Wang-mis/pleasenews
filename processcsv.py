@@ -1,12 +1,9 @@
 
 import pandas as pd
-from utils import export_head, mentions_head, times
+from utils import export_head, mentions_head, times, MEDIUMLIST
 import os
 import warnings
 warnings.filterwarnings("ignore")
-
-
-MEDIUMLIST = ['abcnews.go.com', 'yahoo.com', 'cnn.com', 'foxnews.com', 'europesun.com', 'dailymail.co.uk', 'bbc.com', 'bbc.co.uk', 'washingtonpost.com', 'nytimes.com']
 
 
 def process(tmp, filter=['RUS', 'UKR']):

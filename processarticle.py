@@ -44,7 +44,7 @@ def mergeArticles():
             data["content"].append(content)
 
         df = pd.DataFrame(data)
-        df.to_csv(medium + ".csv", index=False)
+        df.to_csv("./pnews/" + medium + ".csv", index=False)
 
 
 if __name__ == "__main__":

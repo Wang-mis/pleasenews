@@ -68,21 +68,20 @@ def specificDay(string, withhead=False, filedir="./csv/", download="export"):
             print("error")
             print("error-url: ", url)
             return
-        
+        # 保存zip文件
         with open(filedir+"test.zip", "wb") as data:
             data.write(test_request.content)
-        
+        # 从zip文件中提取CSV文件
         with zipfile.ZipFile(filedir+'test.zip','r') as zf:
             if download == "export":
                 zf.extract(string+'.export.CSV', path=filedir)
             if download == "mentions":
                 zf.extract(string+'.mentions.CSV', path=filedir)
-        
+        # 删除zip文件
         if os.path.exists(filedir+"test.zip"):
             os.remove(filedir+"test.zip")
-        
+        # CSV文件添加head
         if withhead:
-            
             datas = []
             tmp_path = filedir + string + '.export.CSV'
             tmp_head = export_head

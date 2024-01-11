@@ -175,11 +175,13 @@ def craw_articles(
                     continue
 
                 title = h.text.strip().replace('\n',' ').replace('\r',' ')
+                title = re.sub(r"\s+", " ", title)
                 article.append(title+'\n') # 将标题写入文件
 
                 simple_punctuation = '[!"‘’“”#$%&\'()*+,-/:;<=>?@[\\]^_`{|}~，。,]'
                 title = re.sub('[\u4e00-\u9fa5]','',h.text)
                 title = re.sub(simple_punctuation, '', title)
+                title = title.replace('\n',' ').replace('\r',' ').strip()
 
                 print("title=============", title)
                 break # 找到一个标题不为空就满足条件
@@ -196,6 +198,7 @@ def craw_articles(
                 if a.text.strip() == '':
                     continue
                 author = a.text.strip().replace('\n',' ').replace('\r',' ')
+                author = re.sub(r"\s+", " ", author)
                 print("author=============", author)
                 break
             article.append(author+'\n')
@@ -206,6 +209,7 @@ def craw_articles(
                 if t.text.strip() == '':
                     continue
                 time = t.text.strip().replace('\n',' ').replace('\r',' ')
+                time = re.sub(r"\s+", " ", time)
                 print("time=============", time)
                 break
             article.append(time+'\n')
@@ -246,7 +250,7 @@ if __name__ == "__main__":
     print(PROCESS_GDELT_PATH)
 
     same_struct_domain_list = [
-        "bbc.co.uk"
+        "cnn.com"
     ]
 
     for tmp_domain in same_struct_domain_list:
@@ -255,30 +259,31 @@ if __name__ == "__main__":
 
         error_url_txt = "./txt/error_url_" + tmp_domain + ".txt"
         # ==================================================================== #
-        div_article = 'article'
+        div_article = 'main'
         # div_article = 'div'
         div_attrs = {
-            # "class" : "live-feed"
+            "class" : "article__main"
             # "data-testid": "live-blog-content"
             # "role": "article"
         }
         # ==================================================================== #
         h_in = False
-        h_in = True
+        # h_in = True
         h_x = 'h1'
         h_attrs = {
             # "data-testid": "headline"
             # "class" : re.compile('Component-heading')
+            "class": "headline__text inline-placeholder"
         }
 
         a_x = 'div'
         a_attrs = {
-            "class" : "ssrcss-68pt20-Text-TextContributorName e8mq1e96"
+            "class" : "byline__names"
         }
 
         t_x = 'div'
         t_attrs = {
-            "class" : "ssrcss-m5j4pi-MetadataContent eh44mf00"
+            "class" : "headline__byline-sub-text"
         }
         
         find_p = 'p'

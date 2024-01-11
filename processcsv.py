@@ -2,8 +2,11 @@
 import pandas as pd
 from utils import export_head, mentions_head, times
 import os
+import warnings
+warnings.filterwarnings("ignore")
 
-MEDIUM = 'yahoo.com'
+
+MEDIUMLIST = ['abcnews.go.com', 'yahoo.com', 'cnn.com', 'foxnews.com', 'europesun.com', 'dailymail.co.uk', 'bbc.com', 'bbc.co.uk', 'washingtonpost.com', 'nytimes.com']
 
 
 def process(tmp, filter=['RUS', 'UKR']):
@@ -28,6 +31,9 @@ def process(tmp, filter=['RUS', 'UKR']):
 
 def mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_save= "./merge/", filter=["RUS","UKR"]):
     merge_save += "_".join(filter) +"/"
+
+    if len(filter) == 0:
+        merge_save += "NULL/"
 
     if not os.path.exists(merge_save):
         os.makedirs(merge_save)
@@ -54,17 +60,28 @@ def mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_s
 
         # 排序规则：MentionIdentifier升序, SentenceID升序, Confidence 降序
         data.sort_values(['MentionIdentifier', 'SentenceID', 'Confidence'], ascending=[1, 1, 0], inplace=True)
+
+        # 具体网址URL编组去重
         grouped = data.groupby(['MentionIdentifier']).head(1)
+        # 核心事件信服度占比
         grouped = grouped[grouped["Confidence"]>=75]
+        # 核心事件出现在文章开头第一句
         grouped = grouped[grouped["SentenceID"]==1]
 
+
         # 具体媒体MEDIUM
-        grouped = grouped[grouped["MentionSourceName"]==MEDIUM]
+        # grouped = grouped[grouped["MentionSourceName"]==MEDIUM]
+        grouped = grouped[grouped["MentionSourceName"].isin(MEDIUMLIST)]
         # grouped.to_csv("grouped.csv", index=False)
         
         grouped.to_csv(merge_save + ele_dir + ".merge.csv", index=False)
 
 
 if __name__ == "__main__":
-        
-    mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_save= "./merge/", filter=["CHN","CHN"])
+    # filter = ['RUS', 'UKR']
+    # filter = ["CHN", "CHN"]
+    # filter = ["CHN", "TWN"]
+
+    filter = [] # 当filter为[]，检索媒体列表每天报道的核心事件
+
+    mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_save= "./merge/", filter=filter)

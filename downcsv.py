@@ -111,7 +111,7 @@ def downloadMentions(day, withhead=True, filedir='./csv/', download="mentions"):
 
 
 if __name__ == "__main__":
-    TIME_RANGE = [20240101,20240109]
+    TIME_RANGE = [20240101, 20240109]
 
     for i in create_date_range(TIME_RANGE):
         downloadExport(i, filedir='./export/')

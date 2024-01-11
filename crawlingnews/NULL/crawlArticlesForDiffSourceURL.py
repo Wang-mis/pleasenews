@@ -105,7 +105,15 @@ def generate_random_str(randomlength=16):
 
 
 
-def craw_articles(tmp_domain_urls_set,tmp_domain, div_article, div_attrs, use_sub=False, h_x='h1', h_in=False, h_attrs={}, find_p=['p'], p_attrs={}): # use_sub是否创建子文件夹
+def craw_articles(
+        tmp_domain_urls_set, tmp_domain,
+        div_article, div_attrs,
+        use_sub=False, h_in=False,
+        h_x='h1', h_attrs={},
+        a_x='span', a_attrs={},
+        t_x='span', t_attrs={},
+        find_p=['p'], p_attrs={} ): # use_sub是否创建子文件夹
+    
     error_url = [] # 保存出错的URL
     for urli in tmp_domain_urls_set:
         try:
@@ -113,13 +121,12 @@ def craw_articles(tmp_domain_urls_set,tmp_domain, div_article, div_attrs, use_su
             sess.mount('http://', HTTPAdapter(max_retries=10))
             sess.mount('https://', HTTPAdapter(max_retries=10))
             sess.keep_alive = False
-            
-            # 获取链接与时间
-            day = urli.split("+")[-1]
+
+            day = urli.split("+")[-1] # 获取链接与时间
             url = urli.split("+")[0]
             sub_path = "./articles/" + tmp_domain+"/"
-            if use_sub:
-                # 获取子域 创建子域文件夹
+            
+            if use_sub: # 获取子域 创建子域文件夹
                 sub_tmp_domain = urli.split(tmp_domain + "/")[-1].split("/")[0]
                 sub_path = "./articles/" + tmp_domain+"/" + sub_tmp_domain+"/"
             
@@ -140,18 +147,18 @@ def craw_articles(tmp_domain_urls_set,tmp_domain, div_article, div_attrs, use_su
 
             content_div = soup.find(name=div_article, attrs=div_attrs)
 
-            if len(h_attrs) != 0:
-                if h_in:
-                    new_title = content_div.find_all(h_x, attrs=h_attrs)
-                else:
-                    new_title = soup.find_all(h_x, attrs=h_attrs)
+            # 获取标题
+            if h_in:
+                titleList = content_div.find_all(h_x, attrs=h_attrs)
+                authorList = content_div.find_all(a_x, attrs=a_attrs)
+                timeList = content_div.find_all(t_x, attrs=t_attrs)
             else:
-                if h_in:
-                    new_title = content_div.find_all(h_x)
-                else:
-                    new_title = soup.find_all(h_x)
-            
-            print("new_title: ", new_title, "len(new_title): ", len(new_title))
+                titleList = soup.find_all(h_x, attrs=h_attrs)
+                authorList = soup.find_all(a_x, attrs=a_attrs)
+                timeList = soup.find_all(t_x, attrs=t_attrs)
+            print("titleList: ", titleList, "len(titleList): ", len(titleList))
+            print("authorList: ", authorList, "len(authorList): ", len(authorList))
+            print("timeList: ", timeList, "len(timeList): ", len(timeList))
 
             new_paragraph_list = []
             for ele_p in find_p:
@@ -159,28 +166,50 @@ def craw_articles(tmp_domain_urls_set,tmp_domain, div_article, div_attrs, use_su
             
             # 保存
             article = []
+
+            # =============================新闻标题=============================
             title = '_'
-            for h in new_title:
+            for h in titleList:
                 if h.text.strip() == '':
-                    print("title列表中当前title为空")
                     continue
-                
+
+                title = h.text.strip().replace('\n',' ').replace('\r',' ')
+                article.append(title+'\n') # 将标题写入文件
+
                 simple_punctuation = '[!"‘’“”#$%&\'()*+,-/:;<=>?@[\\]^_`{|}~，。,]'
                 title = re.sub('[\u4e00-\u9fa5]','',h.text)
                 title = re.sub(simple_punctuation, '', title)
-                print('title:',title)
-                title = title.replace('\n','').replace('\r','')
+
                 print("title=============", title)
-                title = title.strip()
-                article.append(title+'\n')
-                
-                break # 找到一个标题不为空行
+                break # 找到一个标题不为空就满足条件
 
             if title == '_':
-                title = day + "+" + generate_random_str()
+                title = day + "+ " + generate_random_str()
                 raise Exception("random title !!!!")
             else:
-                title = day + title[:25]
+                title = day + " " + title[:25]
+
+            # =============================新闻作者=============================
+            author = '_'
+            for a in authorList:
+                if a.text.strip() == '':
+                    continue
+                author = a.text.strip().replace('\n',' ').replace('\r',' ')
+                print("author=============", author)
+                break
+            article.append(author+'\n')
+
+            # =============================发布时间=============================
+            time = '_'
+            for t in timeList:
+                if t.text.strip() == '':
+                    continue
+                time = t.text.strip().replace('\n',' ').replace('\r',' ')
+                print("time=============", time)
+                break
+            article.append(time+'\n')
+            
+            
             article.append(day+"\n")
             article.append(url+"\n")
             
@@ -189,10 +218,12 @@ def craw_articles(tmp_domain_urls_set,tmp_domain, div_article, div_attrs, use_su
 
             for p in new_paragraph_list:
                 paragraph = p.text
-                paragraph = paragraph.encode("gbk", 'ignore').decode("gbk", "ignore") # gbk编码报错
-                paragraph=re.sub('[\u4e00-\u9fa5]', '', paragraph)
-                simple_punctuation = '[‘’“”–，。]'
-                paragraph = re.sub(simple_punctuation, '', paragraph)
+                paragraph = paragraph.encode("utf8", 'ignore').decode("utf8", "ignore") # gbk编码报错
+                # paragraph=re.sub('[\u4e00-\u9fa5]', '', paragraph)
+                # simple_punctuation = '[‘’“”–，。]'
+                # paragraph = re.sub(simple_punctuation, '', paragraph)
+                paragraph = paragraph.replace('\n',' ').replace('\r',' ').strip()
+
                 article.append(paragraph+'\n')
 
             f=open(sub_path + title + ".txt","w", encoding='utf8')
@@ -239,22 +270,24 @@ if __name__ == "__main__":
             # "data-test-id" : "article-content"
         }
         # ==================================================================== #
-        h_x = 'h1'
         h_in = False
         h_in = True
+        h_x = 'h1'
         h_attrs = {
             # "class" : re.compile('Component-heading')
-            # "class" : "widget__headline h1"
-            # "class" : "wp-block-post-title"
-            # "id" : "ContentPlaceHolder1_hd" 
-            # 'itemprop': "name"
-            # "itemprop" : "headline name"
-            # "data-test-id" : "post-title"
-            # "data-testid" : "article-header-heading"
+        }
+
+        a_x = 'div'
+        a_attrs = {
+            "class" : "caas-attr-item-author"
+        }
+
+        t_x = 'div'
+        t_attrs = {
+            "class" : "caas-attr-time-style"
         }
         
         find_p = 'p'
-        # find_p = 'span'
         p_attrs = {
             # "data-text" : "true"
         }
@@ -266,10 +299,10 @@ if __name__ == "__main__":
         # 第一次爬取 没有出现error_url_tmp_domian.txt
         if not os.path.exists(error_url_txt):
             tmp_domain_urls_set = unique_url_about_source_domain(tmp_domain)
-            craw_articles(tmp_domain_urls_set,tmp_domain, div_article=div_article, div_attrs=div_attrs, use_sub=False, h_x=h_x, h_in=h_in, h_attrs=h_attrs,find_p=find_p, p_attrs=p_attrs)
+            craw_articles(tmp_domain_urls_set,tmp_domain, div_article=div_article, div_attrs=div_attrs, use_sub=False, h_x=h_x, h_in=h_in, h_attrs=h_attrs, a_x=a_x, a_attrs=a_attrs, t_x=t_x, t_attrs=t_attrs, find_p=find_p, p_attrs=p_attrs)
         else:
             print("已经出现")
             # 再次获取出错的链接文章
             tmp_domain_urls_set = regen_tmp_domain_urls_set(tmp_domain)
-            craw_articles(tmp_domain_urls_set,tmp_domain, div_article=div_article, div_attrs=div_attrs, use_sub=False, h_x=h_x, h_in=h_in, h_attrs=h_attrs,find_p=find_p, p_attrs=p_attrs)
+            craw_articles(tmp_domain_urls_set,tmp_domain, div_article=div_article, div_attrs=div_attrs, use_sub=False, h_x=h_x, h_in=h_in, h_attrs=h_attrs, a_x=a_x, a_attrs=a_attrs, t_x=t_x, t_attrs=t_attrs, find_p=find_p, p_attrs=p_attrs)
 

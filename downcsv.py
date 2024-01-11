@@ -17,6 +17,8 @@ warnings.filterwarnings("ignore")
 os.environ['HTTPS_PROXY'] = 'http://127.0.0.1:1080'
 os.environ["HTTP_PROXY"] = 'http://127.0.0.1:1080'
 
+MEDIUM = 'yahoo.com'
+
 
 def create_date_range(inp:list):
     result_list = []
@@ -154,8 +156,8 @@ def mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_s
         grouped = grouped[grouped["Confidence"]>=75]
         grouped = grouped[grouped["SentenceID"]==1]
 
-        # 只看yahoo.com的
-        grouped = grouped[grouped["MentionSourceName"]=='yahoo.com']
+        # 具体媒体MEDIUM
+        grouped = grouped[grouped["MentionSourceName"]==MEDIUM]
         # grouped.to_csv("grouped.csv", index=False)
         
         grouped.to_csv(merge_save + ele_dir + ".merge.csv", index=False)

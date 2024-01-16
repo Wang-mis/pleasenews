@@ -17,7 +17,7 @@ def readArticle(article_path):
     dtime = lines[3].strip()
     url = lines[4].strip()
     content = "".join(lines[5:]).strip()
-    return title, author, ptime, dtime, url, content
+    return title, author, ptime, dtime, url, content, len(lines[5:])
 
 
 def mergeArticles():
@@ -34,9 +34,10 @@ def mergeArticles():
             "url": [],
             "content": [],
         }
-
+        print(medium)
+        m_len = 0
         for index, article in enumerate(articles):
-            title, author, ptime, dtime, url, content = readArticle(ARTICLES_PATH + medium + "/" + article)
+            title, author, ptime, dtime, url, content, len = readArticle(ARTICLES_PATH + medium + "/" + article)
             
             data["newid"].append(generate_random_string() + "-" + str(index))
             data["title"].append(title)
@@ -46,8 +47,12 @@ def mergeArticles():
             data["url"].append(url)
             data["content"].append(content)
 
+            m_len += len
+
         df = pd.DataFrame(data)
         df.to_csv("./pnews/" + medium + ".csv", index=False)
+        
+        print(m_len)
 
 
 if __name__ == "__main__":

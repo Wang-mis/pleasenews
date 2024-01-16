@@ -1,6 +1,7 @@
 
 import os
 import pandas as pd
+from utils import generate_random_string
 
 
 ARTICLES_PATH = "./crawlingnews/NULL/articles/"
@@ -25,6 +26,7 @@ def mergeArticles():
         articles = os.listdir(ARTICLES_PATH + medium + "/")
 
         data = {
+            "newid": [],
             "title": [],
             "author": [],
             "ptime": [],
@@ -33,9 +35,10 @@ def mergeArticles():
             "content": [],
         }
 
-        for article in articles:
+        for index, article in enumerate(articles):
             title, author, ptime, dtime, url, content = readArticle(ARTICLES_PATH + medium + "/" + article)
             
+            data["newid"].append(generate_random_string() + "-" + str(index))
             data["title"].append(title)
             data["author"].append(author)
             data["ptime"].append(ptime)

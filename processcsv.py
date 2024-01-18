@@ -57,8 +57,8 @@ def mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_s
         data = pd.merge(process_df, result, how='inner', on='GlobalEventID')
         # data = pd.merge(process_df,result,how='left',on='GlobalEventID')
 
-        # 排序规则：MentionIdentifier升序, SentenceID升序, Confidence 降序
-        data.sort_values(['MentionIdentifier', 'SentenceID', 'Confidence'], ascending=[1, 1, 0], inplace=True)
+        # 排序规则：MentionIdentifier升序, SentenceID升序, Confidence 降序, NumMentions 降序, NumArticles 降序, NumSources 降序
+        data.sort_values(['MentionIdentifier', 'SentenceID', 'Confidence', 'NumMentions', 'NumArticles', 'NumSources'], ascending=[1, 1, 0, 0, 0, 0], inplace=True)
 
         # 具体网址URL编组去重
         grouped = data.groupby(['MentionIdentifier']).head(1)

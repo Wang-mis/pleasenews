@@ -31,6 +31,7 @@ def mergeArticles():
             "author": [],
             "ptime": [],
             "dtime": [],
+            "medium":[],
             "url": [],
             "content": [],
         }
@@ -44,6 +45,7 @@ def mergeArticles():
             data["author"].append(author)
             data["ptime"].append(ptime)
             data["dtime"].append(dtime)
+            data["medium"].append(medium)
             data["url"].append(url)
             data["content"].append(content)
 

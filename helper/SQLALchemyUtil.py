@@ -2,7 +2,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, DECIMAL, Float
 from sqlalchemy.orm import declarative_base
-
+from sqlalchemy.orm import sessionmaker
 import pandas as pd
 
 
@@ -11,7 +11,7 @@ engine = create_engine('sqlite:///SQLiteTest.db?check_same_thread=False', echo=T
 
 Base = declarative_base()
 
-class MergeTable(Base):
+class MergeItem(Base):
     __tablename__ = 'merge_table'
 
     # 系统自带id 可自增
@@ -108,51 +108,99 @@ class MergeTable(Base):
     # 为了唯一标记一篇新闻文章
     UniqueID = Column(String)
 
+def gainMergeItem(row):
+    return MergeItem(
+        GlobalEventID = row[0],
+        Day = row[1],
+        MonthYear = row[2],
+        Year = row[3],
+        FractionDate = row[4],
+        Actor1Code = row[5],
+        Actor1Name = row[6],
+        Actor1CountryCode = row[7],
+        Actor1KnownGroupCode = row[8],
+        Actor1EthnicCode = row[9],
+        Actor1Religion1Code = row[10],
+        Actor1Religion2Code = row[11],
+        Actor1Type1Code = row[12],
+        Actor1Type2Code = row[13],
+        Actor1Type3Code = row[14],
+        Actor2Code = row[15],
+        Actor2Name = row[16],
+        Actor2CountryCode = row[17],
+        Actor2KnownGroupCode = row[18],
+        Actor2EthnicCode = row[19],
+        Actor2Religion1Code = row[20],
+        Actor2Religion2Code = row[21],
+        Actor2Type1Code = row[22],
+        Actor2Type2Code = row[23],
+        Actor2Type3Code = row[24],
+        IsRootEvent = row[25],
+        EventCode = row[26],
+        EventBaseCode = row[27],
+        EventRootCode = row[28],
+        QuadClass = row[29],
+        GoldsteinScale = row[30],
+        NumMentions = row[31],
+        NumSources = row[32],
+        NumArticles = row[33],
+        AvgTone = row[34],
+        Actor1Geo_Type = row[35],
+        Actor1Geo_Fullname = row[36],
+        Actor1Geo_CountryCode = row[37],
+        Actor1Geo_ADM1Code = row[38],
+        Actor1Geo_Lat = row[39],
+        Actor1Geo_Long = row[40],
+        Actor1Geo_FeatureID = row[41],
+        Actor2Geo_Type = row[42],
+        Actor2Geo_Fullname = row[43],
+        Actor2Geo_CountryCode = row[44],
+        Actor2Geo_ADM1Code = row[45],
+        Actor2Geo_Lat = row[46],
+        Actor2Geo_Long = row[47],
+        Actor2Geo_FeatureID = row[48],
+        ActionGeo_Type = row[49],
+        ActionGeo_Fullname = row[50],
+        ActionGeo_CountryCode = row[51],
+        ActionGeo_ADM1Code = row[52],
+        ActionGeo_Lat = row[53],
+        ActionGeo_Long = row[54],
+        ActionGeo_FeatureID = row[55],
+        DATEADDED = row[56],
+        SOURCEURL = row[57],
+        EventTimeDate = row[58],
+        MentionTimeDate = row[59],
+        MentionType = row[60],
+        MentionSourceName = row[61],
+        MentionIdentifier = row[62],
+        SentenceID = row[63],
+        Actor1CharOffset = row[64],
+        Actor2CharOffset = row[65],
+        ActionCharOffset = row[66],
+        InRawText = row[67],
+        Confidence = row[68],
+        MentionDocLen = row[69],
+        MentionDocTone = row[70],
+        MentionDocTranslationInfo = row[71],
+        Extras = row[72],
+        UniqueID = row[73]
+    )
 
 
+def writeMergeTable(file_path = "../merge/NULL/20240101_20240109.merge.csv"):
+    Base.metadata.create_all(engine, checkfirst=True)
+    Session = sessionmaker(bind=engine)
+    session = Session() # 实例化会话
 
-class User(Base):
-    __tablename__ = 'users'
+    data = pd.read_csv(file_path).fillna("")
+    merge_list = []
+    for index, row in data.iterrows():
+        merge_list.append(gainMergeItem(row.tolist()))
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    fullname = Column(String)
-    password = Column(String)
-
-    def __repr__(self):
-       return "<User(name='%s', fullname='%s', password='%s')>" % (
-                            self.name, self.fullname, self.password)
-
-
-    
-
+    session.add_all(merge_list)
+    session.commit() # 提交数据
+    session.close()
 
 if __name__ == '__main__':
-    print(User.__table__)
-
-    # 创建数据表。一方面通过engine来连接数据库，另一方面根据哪些类继承了Base来决定创建哪些表
-    # checkfirst=True，表示创建表前先检查该表是否存在，如同名表已存在则不再创建。其实默认就是True
-    # Base.metadata.create_all(engine, checkfirst=True)
-
-    # from sqlalchemy.orm import sessionmaker
-    # Session = sessionmaker(bind=engine)
-    # session = Session() # 实例化会话
-
-    # # 对象实例
-    # user = User(name='ed', fullname='Ed Jones', password='edsnickname')
-    # session.add(user)
-
-    # # 一次插入多条记录形式
-    # session.add_all([
-    #     User(name='wendy', fullname='Wendy Williams', password='foobar'),
-    #     User(name='mary', fullname='Mary Contrary', password='xxg527'),
-    #     User(name='fred', fullname='Fred Flinstone', password='blah')
-    # ])
-
-    # # 当前更改只是在session中，需要使用commit确认更改才会写入数据库
-    # session.commit() # 提交数据
-
-
-
-
+    writeMergeTable()
     pass

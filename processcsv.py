@@ -71,14 +71,14 @@ def mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_s
         # 具体媒体MEDIUM
         # grouped = grouped[grouped["MentionSourceName"]==MEDIUM]
         grouped = grouped[grouped["MentionSourceName"].isin(MEDIUMLIST)]
-        # grouped.to_csv("grouped.csv", index=False)
+        # 添加唯一标识的列（随机函数生成，也可能不是唯一）
+        grouped['UniqueID'] = grouped.apply(lambda x : generate_random_string(10) + "_" + generate_random_string(15), axis = 1)
         
         grouped.to_csv(merge_save + ele_dir + ".merge.csv", index=False)
         sub_merge_dfs.append(grouped)
     
     # 合并所有的merge.csv
     all_merge_dfs = pd.concat(sub_merge_dfs)
-    all_merge_dfs['UniqueID'] = all_merge_dfs.apply(lambda x : generate_random_string(10) + "_" + currTime(), axis = 1)
     ele_dir = mention_dir[0] + '_' + mention_dir[-1]
     all_merge_dfs.to_csv(merge_save + ele_dir + ".merge.csv", index=False)
 

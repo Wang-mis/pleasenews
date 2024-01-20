@@ -26,28 +26,28 @@ def mergeArticles():
         articles = os.listdir(ARTICLES_PATH + medium + "/")
 
         data = {
-            "newid": [],
-            "title": [],
-            "author": [],
-            "ptime": [],
-            "dtime": [],
-            "medium":[],
-            "url": [],
-            "content": [],
+            "UniqueID": [],
+            "Title": [],
+            "Author": [],
+            "PTime": [],
+            "DTime": [],
+            "MentionSourceName":[],
+            "MentionIdentifier": [],
+            "Content": [],
         }
         print(medium)
         m_len = 0
         for index, article in enumerate(articles):
             title, author, ptime, dtime, url, content, len = readArticle(ARTICLES_PATH + medium + "/" + article)
             
-            data["newid"].append(generate_random_string() + "-" + str(index))
-            data["title"].append(title)
-            data["author"].append(author)
-            data["ptime"].append(ptime)
-            data["dtime"].append(dtime)
-            data["medium"].append(medium)
-            data["url"].append(url)
-            data["content"].append(content)
+            data["UniqueID"].append(article.split(".")[0]) # txt文本文件的名称就是UniqueID
+            data["Title"].append(title)
+            data["Author"].append(author)
+            data["PTime"].append(ptime)
+            data["DTime"].append(dtime)
+            data["MentionSourceName"].append(medium)
+            data["MentionIdentifier"].append(url)
+            data["Content"].append(content)
 
             m_len += len
 

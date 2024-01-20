@@ -1,6 +1,6 @@
 
 import pandas as pd
-from utils import export_head, mentions_head, times, MEDIUMLIST
+from utils import export_head, mentions_head, times, MEDIUMLIST, generate_random_string, currTime
 import os
 import warnings
 warnings.filterwarnings("ignore")
@@ -78,6 +78,7 @@ def mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_s
     
     # 合并所有的merge.csv
     all_merge_dfs = pd.concat(sub_merge_dfs)
+    all_merge_dfs['UniqueID'] = all_merge_dfs.apply(lambda x : generate_random_string(10) + "_" + currTime(), axis = 1)
     ele_dir = mention_dir[0] + '_' + mention_dir[-1]
     all_merge_dfs.to_csv(merge_save + ele_dir + ".merge.csv", index=False)
 

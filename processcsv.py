@@ -1,6 +1,6 @@
 
 import pandas as pd
-from utils import export_head, mentions_head, times, MEDIUMLIST
+from utils import export_head, mentions_head, times, MEDIUMLIST, generate_random_string, currTime
 import os
 import warnings
 warnings.filterwarnings("ignore")
@@ -57,8 +57,8 @@ def mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_s
         data = pd.merge(process_df, result, how='inner', on='GlobalEventID')
         # data = pd.merge(process_df,result,how='left',on='GlobalEventID')
 
-        # 排序规则：MentionIdentifier升序, SentenceID升序, Confidence 降序
-        data.sort_values(['MentionIdentifier', 'SentenceID', 'Confidence'], ascending=[1, 1, 0], inplace=True)
+        # 排序规则：MentionIdentifier升序, SentenceID升序, Confidence 降序, NumMentions 降序, NumArticles 降序, NumSources 降序
+        data.sort_values(['MentionIdentifier', 'SentenceID', 'Confidence', 'NumMentions', 'NumArticles', 'NumSources'], ascending=[1, 1, 0, 0, 0, 0], inplace=True)
 
         # 具体网址URL编组去重
         grouped = data.groupby(['MentionIdentifier']).head(1)
@@ -71,7 +71,8 @@ def mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_s
         # 具体媒体MEDIUM
         # grouped = grouped[grouped["MentionSourceName"]==MEDIUM]
         grouped = grouped[grouped["MentionSourceName"].isin(MEDIUMLIST)]
-        # grouped.to_csv("grouped.csv", index=False)
+        # 添加唯一标识的列（随机函数生成，也可能不是唯一）
+        grouped['UniqueID'] = grouped.apply(lambda x : generate_random_string(10) + "_" + generate_random_string(15), axis = 1)
         
         grouped.to_csv(merge_save + ele_dir + ".merge.csv", index=False)
         sub_merge_dfs.append(grouped)

@@ -12,6 +12,7 @@ db.sqlite3-journal
 # Jupyter Notebook
 .ipynb_checkpoints
 
+!SQLite.log
 
 export/**
 

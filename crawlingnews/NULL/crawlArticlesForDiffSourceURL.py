@@ -255,7 +255,7 @@ if __name__ == "__main__":
     print(PROCESS_GDELT_PATH)
 
     same_struct_domain_list = [
-        "cnn.com"
+        "bbc.co.uk"
     ]
 
     for tmp_domain in same_struct_domain_list:
@@ -264,39 +264,31 @@ if __name__ == "__main__":
 
         error_url_txt = "./txt/error_url_" + tmp_domain + ".txt"
         # ==================================================================== #
-        div_article = 'main'
-        # div_article = 'div'
+        div_article = 'article'
         div_attrs = {
-            "class" : "article__main"
-            # "data-testid": "live-blog-content"
-            # "role": "article"
+            
         }
         # ==================================================================== #
-        h_in = False
+        h_in = True
         # h_in = True
         h_x = 'h1'
         h_attrs = {
-            # "data-testid": "headline"
-            # "class" : re.compile('Component-heading')
-            "class": "headline__text inline-placeholder"
+
         }
 
         a_x = 'div'
         a_attrs = {
-            "class" : "byline__names"
+            "class" : "ssrcss-68pt20-Text-TextContributorName e8mq1e96"
         }
 
         t_x = 'div'
         t_attrs = {
-            "class" : "headline__byline-sub-text"
+            "class" : "ssrcss-m5j4pi-MetadataContent eh44mf00"
         }
         
         find_p = 'p'
         p_attrs = {
-            # "data-text" : "true"
-            # "role": "article"
-            # "class": "ssrcss-11r1m41-RichTextComponentWrapper ep2nwvo0"
-            # "data-component": "text-block"
+            
         }
 
 

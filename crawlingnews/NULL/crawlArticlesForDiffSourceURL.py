@@ -54,12 +54,14 @@ def unique_url_about_source_domain(tmp_domian):
                 if tmp_domian == source_url_domain:
                     tmp_source_url = getattr(row, 'MentionIdentifier')
                     day = getattr(row, 'Day')
-                    tmp_domain_urls.append(tmp_source_url+"+"+str(day))
+                    uniqueId = getattr(row, 'UniqueID')
+                    tmp_domain_urls.append(tmp_source_url+"+"+str(day)+"+"+uniqueId)
             if FILTER == 'SOURCEURL':
                 source_url_domain = getattr(row, 'SOURCEURL')
                 if tmp_domian in source_url_domain.split("//")[-1].split("/")[0]:
                     day = getattr(row, 'Day')
-                    tmp_domain_urls.append(source_url_domain+"+"+str(day))
+                    uniqueId = getattr(row, 'UniqueID')
+                    tmp_domain_urls.append(source_url_domain+"+"+str(day)+"+"+uniqueId)
 
     # 去重
     tmp_domain_urls_set = set(tmp_domain_urls)
@@ -84,7 +86,7 @@ def regen_tmp_domain_urls_set(tmp_domain):
     
     url_data = {}
     for line in lines:
-        url_data[line.strip().split('+')[0]] = line.strip().split('+')[1]
+        url_data[line.strip().split('+')[0]] = line.strip().split('+')[1] +"+" + line.strip().split('+')[2]
 
     fr = open(error_path)
     lines = fr.readlines()
@@ -123,8 +125,10 @@ def craw_articles(
             sess.mount('https://', HTTPAdapter(max_retries=10))
             sess.keep_alive = False
 
-            day = urli.split("+")[-1] # 获取链接与时间
             url = urli.split("+")[0]
+            day = urli.split("+")[1] # 获取链接与时间
+            uniqueId = urli.split("+")[2] # 获取链接与时间
+
             sub_path = "./articles/" + tmp_domain+"/"
             
             if use_sub: # 获取子域 创建子域文件夹
@@ -231,7 +235,8 @@ def craw_articles(
 
                 article.append(paragraph+'\n')
 
-            f=open(sub_path + title + ".txt","w", encoding='utf8')
+            # f=open(sub_path + title + ".txt","w", encoding='utf8') 
+            f=open(sub_path + uniqueId + ".txt","w", encoding='utf8') 
             f.writelines(article)
             f.close()
         

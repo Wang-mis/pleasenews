@@ -231,7 +231,7 @@ def gainNewItem(row):
         Content = row[7]
     )
 
-def writeNewTable(file_path = "../pnews/MentionSourceNames.csv"):
+def writeNewTable(file_path = "../pnews/20240120/MentionSourceNames.csv"):
     Base.metadata.create_all(engine, checkfirst=True)
     Session = sessionmaker(bind=engine)
     session = Session() # 实例化会话
@@ -256,7 +256,7 @@ def test():
 if __name__ == '__main__':
     # writeMergeTable()
 
-    # writeNewTable()
+    writeNewTable()
 
     # test()
     pass

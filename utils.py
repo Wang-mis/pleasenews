@@ -196,7 +196,6 @@ MEDIUMLIST = [
     'nytimes.com'
 ]
 
-
 import random
 import string
 import time

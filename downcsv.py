@@ -7,9 +7,8 @@ import requests
 import zipfile
 import os
 import csv
-from datetime import datetime, timedelta
 from requests.adapters import HTTPAdapter
-from utils import export_head, mentions_head, times
+from utils import export_head, mentions_head, times, create_date_range, TIME_RANGE
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -17,18 +16,7 @@ os.environ['HTTPS_PROXY'] = 'http://127.0.0.1:1080'
 os.environ["HTTP_PROXY"] = 'http://127.0.0.1:1080'
 
 
-def create_date_range(inp:list):
-    result_list = []
-    sta_day = datetime.strptime(str(inp[0]), '%Y%m%d')
-    end_day = datetime.strptime(str(inp[1]), '%Y%m%d')
-    dlt_day = (end_day - sta_day).days + 1
 
-    for i in range(dlt_day):
-        tmp_day = sta_day + timedelta(days=i)
-        tmp_day_txt = tmp_day.strftime('%Y%m%d')
-        result_list.append(tmp_day_txt)
-
-    return result_list
 
 # download a single data form gdelt.
 def specificDay(string, withhead=False, filedir="./csv/", download="export"):
@@ -111,8 +99,7 @@ def downloadMentions(day, withhead=True, filedir='./csv/', download="mentions"):
 
 
 if __name__ == "__main__":
-    TIME_RANGE = [20240101, 20240109]
-
+    
     for i in create_date_range(TIME_RANGE):
         downloadExport(i, filedir='./export/')
         downloadMentions(i, filedir='./mentions/')

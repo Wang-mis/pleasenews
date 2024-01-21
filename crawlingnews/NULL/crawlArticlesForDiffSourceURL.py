@@ -31,13 +31,14 @@ headers = {
 }
 
 # MERGE Mention 数据集位置
-PROCESS_GDELT_PATH = '../../merge/NULL/'
-FILTER = "MentionSourceName"
-# FILTER = "SOURCEURL"
+PROCESS_GDELT_PATH = '../../merge/NULL/20240110_20240120.merge.csv'
+FILTER = "MentionSourceName"  # FILTER = "SOURCEURL"
+SAVE_TXT = "./txt/20240120/"
+SAVE_ARTICLE = "./articles/20240120/"
 
 # 查询相关域名下新闻文章链接
 def unique_url_about_source_domain(tmp_domian):
-    unique_path = "./txt/unique_url_about_" + tmp_domian + ".txt"
+    unique_path = SAVE_TXT + "unique_url_about_" + tmp_domian + ".txt"
     if os.path.exists(unique_path):
         print(unique_path, "已经出现")
         fr = open(unique_path)
@@ -46,22 +47,25 @@ def unique_url_about_source_domain(tmp_domian):
         return set([line.strip() for line in lines])
 
     tmp_domain_urls = []
-    for i in os.listdir(PROCESS_GDELT_PATH):
-        tmp = pd.read_csv(PROCESS_GDELT_PATH + i)
-        for row in tmp.itertuples():
-            if FILTER == 'MentionSourceName':
-                source_url_domain = getattr(row, 'MentionSourceName')
-                if tmp_domian == source_url_domain:
-                    tmp_source_url = getattr(row, 'MentionIdentifier')
-                    day = getattr(row, 'Day')
-                    uniqueId = getattr(row, 'UniqueID')
-                    tmp_domain_urls.append(tmp_source_url+"+"+str(day)+"+"+uniqueId)
-            if FILTER == 'SOURCEURL':
-                source_url_domain = getattr(row, 'SOURCEURL')
-                if tmp_domian in source_url_domain.split("//")[-1].split("/")[0]:
-                    day = getattr(row, 'Day')
-                    uniqueId = getattr(row, 'UniqueID')
-                    tmp_domain_urls.append(source_url_domain+"+"+str(day)+"+"+uniqueId)
+    
+    # for i in os.listdir(PROCESS_GDELT_PATH):
+        # tmp = pd.read_csv(PROCESS_GDELT_PATH + i)
+    
+    tmp = pd.read_csv(PROCESS_GDELT_PATH)
+    for row in tmp.itertuples():
+        if FILTER == 'MentionSourceName':
+            source_url_domain = getattr(row, 'MentionSourceName')
+            if tmp_domian == source_url_domain:
+                tmp_source_url = getattr(row, 'MentionIdentifier')
+                day = getattr(row, 'Day')
+                uniqueId = getattr(row, 'UniqueID')
+                tmp_domain_urls.append(tmp_source_url+"+"+str(day)+"+"+uniqueId)
+        if FILTER == 'SOURCEURL':
+            source_url_domain = getattr(row, 'SOURCEURL')
+            if tmp_domian in source_url_domain.split("//")[-1].split("/")[0]:
+                day = getattr(row, 'Day')
+                uniqueId = getattr(row, 'UniqueID')
+                tmp_domain_urls.append(source_url_domain+"+"+str(day)+"+"+uniqueId)
 
     # 去重
     tmp_domain_urls_set = set(tmp_domain_urls)
@@ -77,8 +81,8 @@ def unique_url_about_source_domain(tmp_domian):
 
 # 读取出错的url继续爬取文章
 def regen_tmp_domain_urls_set(tmp_domain):
-    unique_path = './txt/unique_url_about_' + tmp_domain +'.txt'
-    error_path = './txt/error_url_' + tmp_domain +'.txt'
+    unique_path = SAVE_TXT + 'unique_url_about_' + tmp_domain +'.txt'
+    error_path = SAVE_TXT + 'error_url_' + tmp_domain +'.txt'
     
     fr = open(unique_path)
     lines = fr.readlines()
@@ -129,11 +133,11 @@ def craw_articles(
             day = urli.split("+")[1] # 获取链接与时间
             uniqueId = urli.split("+")[2] # 获取链接与时间
 
-            sub_path = "./articles/" + tmp_domain+"/"
+            sub_path = SAVE_ARTICLE + tmp_domain+"/"
             
             if use_sub: # 获取子域 创建子域文件夹
                 sub_tmp_domain = urli.split(tmp_domain + "/")[-1].split("/")[0]
-                sub_path = "./articles/" + tmp_domain+"/" + sub_tmp_domain+"/"
+                sub_path = SAVE_ARTICLE + tmp_domain+"/" + sub_tmp_domain+"/"
             
             if not os.path.exists(sub_path):
                 os.makedirs(sub_path)
@@ -246,7 +250,7 @@ def craw_articles(
             error_url.append(url+'\n')
     
     # 保存出错的URL
-    f=open("./txt/error_url_" + tmp_domain + ".txt","w") 
+    f=open(SAVE_TXT + "error_url_" + tmp_domain + ".txt","w") 
     f.writelines(error_url)
     f.close()
 
@@ -262,7 +266,7 @@ if __name__ == "__main__":
         
         print(tmp_domain)
 
-        error_url_txt = "./txt/error_url_" + tmp_domain + ".txt"
+        error_url_txt = SAVE_TXT + "error_url_" + tmp_domain + ".txt"
         # ==================================================================== #
         div_article = 'article'
         div_attrs = {

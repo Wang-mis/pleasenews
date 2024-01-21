@@ -187,7 +187,7 @@ def gainMergeItem(row):
     )
 
 
-def writeMergeTable(file_path = "../merge/NULL/20240101_20240109.merge.csv"):
+def writeMergeTable(file_path = "../merge/NULL/20240110_20240120.merge.csv"):
     Base.metadata.create_all(engine, checkfirst=True)
     Session = sessionmaker(bind=engine)
     session = Session() # 实例化会话
@@ -248,7 +248,7 @@ def writeNewTable(file_path = "../pnews/MentionSourceNames.csv"):
 
 def test():
     # 写一条sql
-    sql = "SELECT COUNT(*) FROM new_table"
+    sql = "SELECT COUNT(*) FROM merge_table"
     #建立dataframe
     df = pd.read_sql_query(sql,engine)
     print(df)
@@ -258,5 +258,5 @@ if __name__ == '__main__':
 
     # writeNewTable()
 
-    test()
+    # test()
     pass

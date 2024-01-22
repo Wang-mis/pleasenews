@@ -93,13 +93,28 @@ def downloadExport(day, withhead=True, filedir='./csv/', download="export"):
     specificDay(string=day, withhead=withhead, filedir=filedir, download=download)
 
 
-def downloadMentions(day, withhead=True, filedir='./csv/', download="mentions"):
+def downloadMentions(day, withhead=True, filedir='./mentions/', download="mentions"):
     for time in times:
         specificDay(string=day + time, withhead=withhead, filedir=filedir, download=download)
 
+def checkMentions(filedir="./mentions/", day="20240121"):
+    # mentions 表下载 复检 （下载时有些会忽略）
+    mfiledir = filedir + day + "/"
+    mentions_csv = os.listdir(mfiledir)
+    if len(mentions_csv) != 96:
+        haved = [ele.split(".")[0][-6:] for ele in mentions_csv]
+        print("待获取: ", (96 - haved))
+        for time in times:
+            if time not in haved:
+                print("复检: ", day + time)
+                specificDay(string= day + time, withhead=True, filedir=filedir, download="mentions")
+    
+    print("待获取: 0")
 
 if __name__ == "__main__":
-    
-    for i in create_date_range(TIME_RANGE):
-        downloadExport(i, filedir='./export/')
-        downloadMentions(i, filedir='./mentions/')
+
+    for day in create_date_range(TIME_RANGE):
+        print(day)
+        # downloadExport(day, filedir='./export/')
+        # downloadMentions(day, filedir='./mentions/')
+        checkMentions(day=day)

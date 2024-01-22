@@ -4,8 +4,9 @@ import pandas as pd
 from utils import generate_random_string
 
 
-ARTICLES_PATH = "./crawlingnews/NULL/articles/"
+ARTICLES_PATH = "./crawlingnews/NULL/articles/20240120/"
 
+SAVE_NEWS = "./pnews/20240120/"
 
 def readArticle(article_path):
     fr = open(article_path, encoding="utf-8")
@@ -22,39 +23,47 @@ def readArticle(article_path):
 
 def mergeArticles():
     mediumList = os.listdir(ARTICLES_PATH)
+
+    sub_merge_dfs = []
+
     for medium in mediumList: # 遍历每一个媒体
         articles = os.listdir(ARTICLES_PATH + medium + "/")
 
         data = {
-            "newid": [],
-            "title": [],
-            "author": [],
-            "ptime": [],
-            "dtime": [],
-            "medium":[],
-            "url": [],
-            "content": [],
+            "UniqueID": [],
+            "Title": [],
+            "Author": [],
+            "PTime": [],
+            "DTime": [],
+            "MentionSourceName":[],
+            "MentionIdentifier": [],
+            "Content": [],
         }
         print(medium)
         m_len = 0
         for index, article in enumerate(articles):
             title, author, ptime, dtime, url, content, len = readArticle(ARTICLES_PATH + medium + "/" + article)
             
-            data["newid"].append(generate_random_string() + "-" + str(index))
-            data["title"].append(title)
-            data["author"].append(author)
-            data["ptime"].append(ptime)
-            data["dtime"].append(dtime)
-            data["medium"].append(medium)
-            data["url"].append(url)
-            data["content"].append(content)
+            data["UniqueID"].append(article.split(".")[0]) # txt文本文件的名称就是UniqueID
+            data["Title"].append(title)
+            data["Author"].append(author)
+            data["PTime"].append(ptime)
+            data["DTime"].append(dtime)
+            data["MentionSourceName"].append(medium)
+            data["MentionIdentifier"].append(url)
+            data["Content"].append(content)
 
             m_len += len
 
         df = pd.DataFrame(data)
-        df.to_csv("./pnews/" + medium + ".csv", index=False)
+        df.to_csv(SAVE_NEWS + medium + ".csv", index=False)
         
         print(m_len)
+
+        sub_merge_dfs.append(df)
+    # 合并所有的merge.csv
+    all_merge_dfs = pd.concat(sub_merge_dfs)
+    all_merge_dfs.to_csv(SAVE_NEWS + "MentionSourceNames.csv", index=False)
 
 
 if __name__ == "__main__":

@@ -19,7 +19,6 @@ from lxml import etree
 import re
 from requests.adapters import HTTPAdapter
 
-
 PROXIES= {
     'http':'http://127.0.0.1:1080',
     'https':'http://127.0.0.1:1080'
@@ -28,16 +27,37 @@ PROXIES= {
 headers = {
     # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0'
+    # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0'
+    # 'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36 Edg/120.0.0.0'
 }
 
 # MERGE Mention 数据集位置
-PROCESS_GDELT_PATH = '../../merge/NULL/'
-FILTER = "MentionSourceName"
-# FILTER = "SOURCEURL"
+DAY = "20240120"
+PROCESS_GDELT_PATH = '../../merge/NULL/20240110_20240120.merge.csv'
+FILTER = "MentionSourceName"  # FILTER = "SOURCEURL"
+SAVE_TXT = "./txt/" + DAY + "/"
+SAVE_ARTICLE = "./articles/" + DAY + "/"
+
+def make_dirs():
+    if not os.path.exists(SAVE_TXT):
+        os.makedirs(SAVE_TXT)
+    
+    if not os.path.exists(SAVE_ARTICLE):
+        os.makedirs(SAVE_ARTICLE)
+
+def Dict2Json(outfile, data):
+    with open(outfile,'w') as f:
+        json.dump(data, f)
+
+def Json2Dict(file):
+    with open(file, 'r') as f:
+        ans = json.load(f)
+    return ans
+
 
 # 查询相关域名下新闻文章链接
 def unique_url_about_source_domain(tmp_domian):
-    unique_path = "./txt/unique_url_about_" + tmp_domian + ".txt"
+    unique_path = SAVE_TXT + "unique_url_about_" + tmp_domian + ".txt"
     if os.path.exists(unique_path):
         print(unique_path, "已经出现")
         fr = open(unique_path)
@@ -46,20 +66,25 @@ def unique_url_about_source_domain(tmp_domian):
         return set([line.strip() for line in lines])
 
     tmp_domain_urls = []
-    for i in os.listdir(PROCESS_GDELT_PATH):
-        tmp = pd.read_csv(PROCESS_GDELT_PATH + i)
-        for row in tmp.itertuples():
-            if FILTER == 'MentionSourceName':
-                source_url_domain = getattr(row, 'MentionSourceName')
-                if tmp_domian == source_url_domain:
-                    tmp_source_url = getattr(row, 'MentionIdentifier')
-                    day = getattr(row, 'Day')
-                    tmp_domain_urls.append(tmp_source_url+"+"+str(day))
-            if FILTER == 'SOURCEURL':
-                source_url_domain = getattr(row, 'SOURCEURL')
-                if tmp_domian in source_url_domain.split("//")[-1].split("/")[0]:
-                    day = getattr(row, 'Day')
-                    tmp_domain_urls.append(source_url_domain+"+"+str(day))
+
+    # for i in os.listdir(PROCESS_GDELT_PATH):
+        # tmp = pd.read_csv(PROCESS_GDELT_PATH + i)
+    
+    tmp = pd.read_csv(PROCESS_GDELT_PATH)
+    for row in tmp.itertuples():
+        if FILTER == 'MentionSourceName':
+            source_url_domain = getattr(row, 'MentionSourceName')
+            if tmp_domian == source_url_domain:
+                tmp_source_url = getattr(row, 'MentionIdentifier')
+                day = getattr(row, 'Day')
+                uniqueId = getattr(row, 'UniqueID')
+                tmp_domain_urls.append(tmp_source_url+"+"+str(day)+"+"+uniqueId)
+        if FILTER == 'SOURCEURL':
+            source_url_domain = getattr(row, 'SOURCEURL')
+            if tmp_domian in source_url_domain.split("//")[-1].split("/")[0]:
+                day = getattr(row, 'Day')
+                uniqueId = getattr(row, 'UniqueID')
+                tmp_domain_urls.append(source_url_domain+"+"+str(day)+"+"+uniqueId)
 
     # 去重
     tmp_domain_urls_set = set(tmp_domain_urls)
@@ -75,8 +100,8 @@ def unique_url_about_source_domain(tmp_domian):
 
 # 读取出错的url继续爬取文章
 def regen_tmp_domain_urls_set(tmp_domain):
-    unique_path = './txt/unique_url_about_' + tmp_domain +'.txt'
-    error_path = './txt/error_url_' + tmp_domain +'.txt'
+    unique_path = SAVE_TXT + 'unique_url_about_' + tmp_domain +'.txt'
+    error_path = SAVE_TXT + 'error_url_' + tmp_domain +'.txt'
     
     fr = open(unique_path)
     lines = fr.readlines()
@@ -84,7 +109,7 @@ def regen_tmp_domain_urls_set(tmp_domain):
     
     url_data = {}
     for line in lines:
-        url_data[line.strip().split('+')[0]] = line.strip().split('+')[1]
+        url_data[line.strip().split('+')[0]] = line.strip().split('+')[1] +"+" + line.strip().split('+')[2]
 
     fr = open(error_path)
     lines = fr.readlines()
@@ -123,13 +148,15 @@ def craw_articles(
             sess.mount('https://', HTTPAdapter(max_retries=10))
             sess.keep_alive = False
 
-            day = urli.split("+")[-1] # 获取链接与时间
             url = urli.split("+")[0]
-            sub_path = "./articles/" + tmp_domain+"/"
+            day = urli.split("+")[1] # 获取链接与时间
+            uniqueId = urli.split("+")[2] # 获取链接与时间
+
+            sub_path = SAVE_ARTICLE + tmp_domain+"/"
             
             if use_sub: # 获取子域 创建子域文件夹
                 sub_tmp_domain = urli.split(tmp_domain + "/")[-1].split("/")[0]
-                sub_path = "./articles/" + tmp_domain+"/" + sub_tmp_domain+"/"
+                sub_path = SAVE_ARTICLE + tmp_domain+"/" + sub_tmp_domain+"/"
             
             if not os.path.exists(sub_path):
                 os.makedirs(sub_path)
@@ -231,7 +258,8 @@ def craw_articles(
 
                 article.append(paragraph+'\n')
 
-            f=open(sub_path + title + ".txt","w", encoding='utf8')
+            # f=open(sub_path + title + ".txt","w", encoding='utf8') 
+            f=open(sub_path + uniqueId + ".txt","w", encoding='utf8') 
             f.writelines(article)
             f.close()
         
@@ -241,12 +269,14 @@ def craw_articles(
             error_url.append(url+'\n')
     
     # 保存出错的URL
-    f=open("./txt/error_url_" + tmp_domain + ".txt","w") 
+    f=open(SAVE_TXT + "error_url_" + tmp_domain + ".txt","w") 
     f.writelines(error_url)
     f.close()
 
 if __name__ == "__main__":
 
+    make_dirs()
+    
     print(PROCESS_GDELT_PATH)
 
     same_struct_domain_list = [
@@ -257,42 +287,50 @@ if __name__ == "__main__":
         
         print(tmp_domain)
 
-        error_url_txt = "./txt/error_url_" + tmp_domain + ".txt"
-        # ==================================================================== #
-        div_article = 'main'
-        # div_article = 'div'
-        div_attrs = {
-            "class" : "article__main"
-            # "data-testid": "live-blog-content"
-            # "role": "article"
-        }
-        # ==================================================================== #
-        h_in = False
+        error_url_txt = SAVE_TXT + "error_url_" + tmp_domain + ".txt"
+
+
+        # div_article = 'article'
+        # div_attrs = {
+            
+        # }
         # h_in = True
-        h_x = 'h1'
-        h_attrs = {
-            # "data-testid": "headline"
-            # "class" : re.compile('Component-heading')
-            "class": "headline__text inline-placeholder"
-        }
+        # # h_in = True
+        # h_x = 'h1'
+        # h_attrs = {
 
-        a_x = 'div'
-        a_attrs = {
-            "class" : "byline__names"
-        }
+        # }
 
-        t_x = 'div'
-        t_attrs = {
-            "class" : "headline__byline-sub-text"
-        }
+        # a_x = 'div'
+        # a_attrs = {
+        #     "class" : "ssrcss-68pt20-Text-TextContributorName e8mq1e96"
+        # }
+
+        # t_x = 'div'
+        # t_attrs = {
+        #     "class" : "ssrcss-m5j4pi-MetadataContent eh44mf00"
+        # }
         
-        find_p = 'p'
-        p_attrs = {
-            # "data-text" : "true"
-            # "role": "article"
-            # "class": "ssrcss-11r1m41-RichTextComponentWrapper ep2nwvo0"
-            # "data-component": "text-block"
-        }
+        # find_p = 'p'
+        # p_attrs = {
+            
+        # }
+
+        config_dict = Json2Dict("../" + same_struct_domain_list[0] + ".config.json")
+        div_article = config_dict["div_article"]
+        div_attrs = config_dict["div_attrs"]
+        h_in = True if config_dict["h_in"] == "True" else False
+        h_x = config_dict["h_x"]
+        h_attrs = config_dict["h_attrs"]
+
+        a_x = config_dict["a_x"]
+        a_attrs = config_dict["a_attrs"]
+
+        t_x = config_dict["t_x"]
+        t_attrs = config_dict["t_attrs"]
+        
+        find_p = config_dict["find_p"]
+        p_attrs = config_dict["p_attrs"]
 
 
 

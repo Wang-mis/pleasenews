@@ -1,6 +1,6 @@
 
 from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, String, DECIMAL, Float
+from sqlalchemy import Column, Integer, String, DECIMAL, Float, Text
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 import pandas as pd
@@ -187,7 +187,7 @@ def gainMergeItem(row):
     )
 
 
-def writeMergeTable(file_path = "../merge/NULL/20240101_20240109.merge.csv"):
+def writeMergeTable(file_path = "../merge/NULL/20240110_20240120.merge.csv"):
     Base.metadata.create_all(engine, checkfirst=True)
     Session = sessionmaker(bind=engine)
     session = Session() # 实例化会话
@@ -201,6 +201,62 @@ def writeMergeTable(file_path = "../merge/NULL/20240101_20240109.merge.csv"):
     session.commit() # 提交数据
     session.close()
 
+
+# 新闻表
+class NewItem(Base):
+    __tablename__ = 'new_table'
+
+    # 系统自带id 可自增
+    AutoId = Column(Integer, primary_key=True)
+
+    # 为了唯一标记一篇新闻文章
+    UniqueID = Column(String)
+    Title = Column(String)
+    Author = Column(String)
+    PTime = Column(String)
+    DTime = Column(Integer)
+    MentionSourceName = Column(String)
+    MentionIdentifier = Column(String)
+    Content = Column(Text)
+
+def gainNewItem(row):
+    return NewItem(
+        UniqueID = row[0],
+        Title = row[1],
+        Author = row[2],
+        PTime = row[3],
+        DTime = row[4],
+        MentionSourceName = row[5],
+        MentionIdentifier = row[6],
+        Content = row[7]
+    )
+
+def writeNewTable(file_path = "../pnews/20240120/MentionSourceNames.csv"):
+    Base.metadata.create_all(engine, checkfirst=True)
+    Session = sessionmaker(bind=engine)
+    session = Session() # 实例化会话
+
+    data = pd.read_csv(file_path).fillna("")
+    merge_list = []
+    for index, row in data.iterrows():
+        merge_list.append(gainNewItem(row.tolist()))
+
+    session.add_all(merge_list)
+    session.commit() # 提交数据
+    session.close()
+
+
+def test():
+    # 写一条sql
+    sql = "SELECT COUNT(*) FROM merge_table"
+    #建立dataframe
+    df = pd.read_sql_query(sql,engine)
+    print(df)
+
 if __name__ == '__main__':
-    writeMergeTable()
+    # writeMergeTable()
+
+    writeNewTable()
+
+    # test()
     pass

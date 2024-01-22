@@ -1,6 +1,6 @@
 
 import pandas as pd
-from utils import export_head, mentions_head, times, MEDIUMLIST, generate_random_string, currTime
+from utils import export_head, mentions_head, times, MEDIUMLIST, generate_random_string, create_date_range, TIME_RANGE
 import os
 import warnings
 warnings.filterwarnings("ignore")
@@ -40,6 +40,13 @@ def mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_s
     sub_merge_dfs = []
 
     for ele_dir in mention_dir:
+
+        if ele_dir not in create_date_range(TIME_RANGE):
+            print("跳过: ", ele_dir)
+            continue
+
+        print("不跳过: ", ele_dir)
+
         ele_dir_path = mention_path + ele_dir + "/"
         sub_dfs = []
         for csv in os.listdir(ele_dir_path):

@@ -246,17 +246,47 @@ def writeNewTable(file_path = "../pnews/20240120/MentionSourceNames.csv"):
     session.close()
 
 
+
+# 关键词表
+class KeywordItem(Base):
+    __tablename__ = 'keyword_table'
+
+    # 系统自带id 可自增
+    AutoId = Column(Integer, primary_key=True)
+    # 为了唯一标记一篇新闻文章
+    UniqueID = Column(String)
+    Keyword = Column(Text)
+
+def gainKeywordItem(row):
+    return KeywordItem(
+        UniqueID = row[0],
+        Keyword = row[1]
+    )
+
+def writeKeywordTable(file_path = "../pnews/20240120/Keywords_check.csv"):
+    Base.metadata.create_all(engine, checkfirst=True)
+    Session = sessionmaker(bind=engine)
+    session = Session() # 实例化会话
+
+    data = pd.read_csv(file_path).fillna("")
+    merge_list = []
+    for index, row in data.iterrows():
+        merge_list.append(gainKeywordItem(row.tolist()))
+
+    session.add_all(merge_list)
+    session.commit() # 提交数据
+    session.close()
+
 def test():
     # 写一条sql
-    sql = "SELECT COUNT(*) FROM merge_table"
+    sql = "SELECT COUNT(*) FROM keyword_table" # merge_table"
     #建立dataframe
     df = pd.read_sql_query(sql,engine)
     print(df)
 
 if __name__ == '__main__':
     # writeMergeTable()
-
-    writeNewTable()
-
-    # test()
+    # writeNewTable()
+    # writeKeywordTable()
+    test()
     pass

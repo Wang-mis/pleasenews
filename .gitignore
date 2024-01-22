@@ -19,3 +19,5 @@ export/**
 mentions/**
 
 crawlingnews/**/articles/**
+
+zlog/

@@ -32,11 +32,18 @@ headers = {
 }
 
 # MERGE Mention 数据集位置
+DAY = "20240120"
 PROCESS_GDELT_PATH = '../../merge/NULL/20240110_20240120.merge.csv'
 FILTER = "MentionSourceName"  # FILTER = "SOURCEURL"
-SAVE_TXT = "./txt/20240120/"
-SAVE_ARTICLE = "./articles/20240120/"
+SAVE_TXT = "./txt/" + DAY + "/"
+SAVE_ARTICLE = "./articles/" + DAY + "/"
 
+def make_dirs():
+    if not os.path.exists(SAVE_TXT):
+        os.makedirs(SAVE_TXT)
+    
+    if not os.path.exists(SAVE_ARTICLE):
+        os.makedirs(SAVE_ARTICLE)
 
 def Dict2Json(outfile, data):
     with open(outfile,'w') as f:
@@ -268,6 +275,8 @@ def craw_articles(
 
 if __name__ == "__main__":
 
+    make_dirs()
+    
     print(PROCESS_GDELT_PATH)
 
     same_struct_domain_list = [

@@ -32,8 +32,8 @@ headers = {
 }
 
 # MERGE Mention 数据集位置
-DAY = "20240120"
-PROCESS_GDELT_PATH = '../../merge/NULL/20240110_20240120.merge.csv'
+DAY = "20240121"
+PROCESS_GDELT_PATH = '../../merge/NULL/20240121.media.merge.csv'
 FILTER = "MentionSourceName"  # FILTER = "SOURCEURL"
 SAVE_TXT = "./txt/" + DAY + "/"
 SAVE_ARTICLE = "./articles/" + DAY + "/"
@@ -280,7 +280,7 @@ if __name__ == "__main__":
     print(PROCESS_GDELT_PATH)
 
     same_struct_domain_list = [
-        "cnn.com"
+        "yahoo.com"
     ]
 
     for tmp_domain in same_struct_domain_list:

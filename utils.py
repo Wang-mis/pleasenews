@@ -184,16 +184,27 @@ times = [
 
 
 MEDIUMLIST = [
-    'abcnews.go.com',
-    'yahoo.com',
-    'cnn.com',
-    'foxnews.com',
-    'europesun.com',
-    'dailymail.co.uk',
+    'apnews.com',
+    'apr.org',
     'bbc.com',
     'bbc.co.uk',
+    'bignewsnetwork.com',
+    'cnn.com',
+    'dailymail.co.uk',
+    'foxnews.com',
+    'globalsecurity.org',
+    'indiatimes.com',
+    'indiablooms.com',
+    'indianexpress.com',
+    'jpost.com',
+    'mirror.co.uk',
+    'nytimes.com',
+    'tass.com',
+    'theguardian.com',
+    'telegraphindia.com',
     'washingtonpost.com',
-    'nytimes.com'
+    'yorkpress.co.uk',
+    'yahoo.com',
 ]
 
 import random

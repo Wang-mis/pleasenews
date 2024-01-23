@@ -102,11 +102,21 @@ def mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_s
     all_merge_dfs.to_csv(merge_save + ele_dir + ".merge.csv", index=False)
 
 
+
+def merge_medialist():
+    TMPATH = "./merge/NULL/20240121"
+    df = pd.read_csv(TMPATH + ".merge.csv")
+    df = df[df["MentionSourceName"].isin(MEDIUMLIST)]
+    df.to_csv(TMPATH + ".media.merge.csv", index=False)
+
+
 if __name__ == "__main__":
     # filter = ['RUS', 'UKR']
     # filter = ["CHN", "CHN"]
     # filter = ["CHN", "TWN"]
 
-    filter = [] # 当filter为[]，检索媒体列表每天报道的核心事件
+    # filter = [] # 当filter为[]，检索媒体列表每天报道的核心事件
 
-    mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_save= "./merge/", filter=filter)
+    # mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_save= "./merge/", filter=filter)
+
+    merge_medialist()

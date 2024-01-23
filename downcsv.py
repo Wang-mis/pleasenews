@@ -115,6 +115,6 @@ if __name__ == "__main__":
 
     for day in create_date_range(TIME_RANGE):
         print(day)
-        # downloadExport(day, filedir='./export/')
+        downloadExport(day, filedir='./export/')
         # downloadMentions(day, filedir='./mentions/')
-        checkMentions(day=day)
+        # checkMentions(day=day)

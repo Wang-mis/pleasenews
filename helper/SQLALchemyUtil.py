@@ -263,7 +263,7 @@ def gainKeywordItem(row):
         Keyword = row[1]
     )
 
-def writeKeywordTable(file_path = "../pnews/20240120/Keywords_check.csv"):
+def writeKeywordTable(file_path = "../pnews/20240109/Keywords_check.csv"):
     Base.metadata.create_all(engine, checkfirst=True)
     Session = sessionmaker(bind=engine)
     session = Session() # 实例化会话

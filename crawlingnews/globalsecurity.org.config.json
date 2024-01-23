@@ -1,0 +1,21 @@
+{
+    "div_article": "div",
+    "div_attrs": {
+        "id": "content"
+    },
+    "h_in": "True",
+    "h_x": "h1",
+    "h_attrs":{
+    },
+    "a_x": "u",
+    "a_attrs":{
+    },
+    "t_x": "div",
+    "t_attrs":{
+        "class" : "Page-dateModified"
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "div_article": "article",
+    "div_attrs": {
+        "id": "contentbox"
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+    },
+    "a_x": "div",
+    "a_attrs":{
+        "class": "publishdate mt-32"
+    },
+    "t_x": "div",
+    "t_attrs":{
+        "class": "publishdate mt-32"
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

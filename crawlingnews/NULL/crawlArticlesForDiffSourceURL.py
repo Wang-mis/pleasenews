@@ -280,7 +280,7 @@ if __name__ == "__main__":
     print(PROCESS_GDELT_PATH)
 
     same_struct_domain_list = [
-        "theguardian.com"
+        "yorkpress.co.uk"
     ]
 
     for tmp_domain in same_struct_domain_list:
@@ -292,7 +292,7 @@ if __name__ == "__main__":
 
         div_article = 'div'
         div_attrs = {
-            "class": "dcr-1b457fa"
+            "id": "subscription-replace-entire-article"
         }
         h_in = False
         h_x = 'h1'
@@ -300,14 +300,14 @@ if __name__ == "__main__":
             
         }
 
-        a_x = 'a'
+        a_x = 'div'
         a_attrs = {
-            "rel": "author"
+            "class": "author-details"
         }
 
         t_x = 'time'
         t_attrs = {
-            "class": "djshfjsdhfj"
+            # "class": "mar-article__timestamp"
         }
         
         find_p = 'p'

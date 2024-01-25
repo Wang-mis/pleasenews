@@ -1,0 +1,23 @@
+{
+    "div_article": "div",
+    "div_attrs": {
+        "itemprop": "articleBody"
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+
+    },
+    "a_x": "a",
+    "a_attrs":{
+        "class": "author"
+    },
+    "t_x": "p",
+    "t_attrs":{
+        "class": "byline-section"
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

@@ -28,7 +28,7 @@ headers = {
     # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0'
     # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0'
-    # 'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36 Edg/120.0.0.0'
+    # 'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36'
 }
 
 # MERGE Mention 数据集位置
@@ -280,7 +280,7 @@ if __name__ == "__main__":
     print(PROCESS_GDELT_PATH)
 
     same_struct_domain_list = [
-        "apr.org"
+        "indianexpress.com"
     ]
 
     for tmp_domain in same_struct_domain_list:
@@ -292,22 +292,22 @@ if __name__ == "__main__":
 
         div_article = 'div'
         div_attrs = {
-            "class": "ArtP-articleBody"
+            "class": "story_details"
         }
         h_in = False
         h_x = 'h1'
         h_attrs = {
-            "class": "ArtP-headline"
+            "itemprop": "headline"
         }
 
-        a_x = 'span'
+        a_x = 'a'
         a_attrs = {
-            "class": "ArtP-authorBy"
+            "class": "bulletProj"
         }
 
-        t_x = 'div'
+        t_x = 'span'
         t_attrs = {
-            "class": "ArtP-datePublished"
+            "itemprop": "dateModified"
         }
         
         find_p = 'p'

@@ -1,0 +1,23 @@
+{
+    "div_article": "div",
+    "div_attrs": {
+        "class": "story_details"
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+        "itemprop": "headline"
+    },
+    "a_x": "a",
+    "a_attrs":{
+        "class": "bulletProj"
+    },
+    "t_x": "span",
+    "t_attrs":{
+        "itemprop": "dateModified"
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

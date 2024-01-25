@@ -1,0 +1,23 @@
+{
+    "div_article": "div",
+    "div_attrs": {
+        "class" : "RichTextStoryBody RichTextBody"
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+        "class": "Page-headline"
+    },
+    "a_x": "div",
+    "a_attrs":{
+        "class" : "Page-authors"
+    },
+    "t_x": "div",
+    "t_attrs":{
+        "class" : "Page-dateModified"
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

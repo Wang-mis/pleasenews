@@ -1,0 +1,22 @@
+{
+    "div_article": "div",
+    "div_attrs": {
+        "class": "dcr-1b457fa"
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+    },
+    "a_x": "a",
+    "a_attrs":{
+        "rel": "author"
+    },
+    "t_x": "time",
+    "t_attrs":{
+        "class": "djshfjsdhfj"
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

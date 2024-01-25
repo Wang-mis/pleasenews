@@ -1,0 +1,23 @@
+{
+    "div_article": "div",
+    "div_attrs": {
+        "class": "article-blah"
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+
+    },
+    "a_x": "p",
+    "a_attrs":{
+        "class": "author"
+    },
+    "t_x": "p",
+    "t_attrs":{
+        "class": "author"
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

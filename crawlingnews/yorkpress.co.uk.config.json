@@ -1,0 +1,22 @@
+{
+    "div_article": "div",
+    "div_attrs": {
+        "id": "subscription-replace-entire-article"
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+
+    },
+    "a_x": "div",
+    "a_attrs":{
+        "class": "author-details"
+    },
+    "t_x": "time",
+    "t_attrs":{
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

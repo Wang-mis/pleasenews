@@ -285,8 +285,9 @@ def test():
     print(df)
 
 if __name__ == '__main__':
-    writeMergeTable(file_path = "../merge/NULL/20240121.media.merge.csv")
-    # writeNewTable()
+    # writeMergeTable(file_path = "../merge/NULL/20240121.media.merge.csv")
+    # writeNewTable(file_path = "../pnews/20240121/MentionSourceNames.csv")
+
     # writeKeywordTable()
     # test()
     pass

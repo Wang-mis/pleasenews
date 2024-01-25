@@ -4,9 +4,13 @@ import pandas as pd
 from utils import generate_random_string
 
 
-ARTICLES_PATH = "./crawlingnews/NULL/articles/20240120/"
+DAY = "20240121"
+ARTICLES_PATH = "./crawlingnews/NULL/articles/"+ DAY +"/"
+SAVE_NEWS = "./pnews/"+ DAY +"/"
 
-SAVE_NEWS = "./pnews/20240120/"
+def make_dirs():
+    if not os.path.exists(SAVE_NEWS):
+        os.makedirs(SAVE_NEWS)
 
 def readArticle(article_path):
     fr = open(article_path, encoding="utf-8")
@@ -67,5 +71,6 @@ def mergeArticles():
 
 
 if __name__ == "__main__":
-
+    make_dirs()
+    
     mergeArticles()

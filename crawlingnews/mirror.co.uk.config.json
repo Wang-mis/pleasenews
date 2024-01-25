@@ -1,0 +1,23 @@
+{
+    "div_article": "section",
+    "div_attrs": {
+        "itemprop": "articleBody"
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+        "class":"lead-content__title"
+    },
+    "a_x": "div",
+    "a_attrs":{
+        "class": "author"
+    },
+    "t_x": "ul",
+    "t_attrs":{
+        "class": "time-info"
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

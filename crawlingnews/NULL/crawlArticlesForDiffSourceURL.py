@@ -280,7 +280,7 @@ if __name__ == "__main__":
     print(PROCESS_GDELT_PATH)
 
     same_struct_domain_list = [
-        "indianexpress.com"
+        "theguardian.com"
     ]
 
     for tmp_domain in same_struct_domain_list:
@@ -292,22 +292,22 @@ if __name__ == "__main__":
 
         div_article = 'div'
         div_attrs = {
-            "class": "story_details"
+            "class": "dcr-1b457fa"
         }
         h_in = False
         h_x = 'h1'
         h_attrs = {
-            "itemprop": "headline"
+            
         }
 
         a_x = 'a'
         a_attrs = {
-            "class": "bulletProj"
+            "rel": "author"
         }
 
-        t_x = 'span'
+        t_x = 'time'
         t_attrs = {
-            "itemprop": "dateModified"
+            "class": "djshfjsdhfj"
         }
         
         find_p = 'p'

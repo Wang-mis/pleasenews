@@ -1,0 +1,22 @@
+{
+    "div_article": "section",
+    "div_attrs": {
+        "itemprop": "articleBody"
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+        "class" : "g-row article-title"
+    },
+    "a_x": "span",
+    "a_attrs":{
+        "class": "article-reporter"
+    },
+    "t_x": "time",
+    "t_attrs":{
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

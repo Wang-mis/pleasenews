@@ -1,0 +1,23 @@
+{
+    "div_article": "div",
+    "div_attrs": {
+        "class" : "artSyn bgPink"
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+        "class": "artTitle font_faus"
+    },
+    "a_x": "span",
+    "a_attrs":{
+        "class" : "ag"
+    },
+    "t_x": "time",
+    "t_attrs":{
+        "class" : "jsdtTime"
+    },
+    "find_p": "h2",
+    "p_attrs":{
+        "class": "summary"
+    }
+}

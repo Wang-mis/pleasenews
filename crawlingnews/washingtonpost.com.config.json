@@ -1,0 +1,22 @@
+{
+    "div_article": "article",
+    "div_attrs": {
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+        "id" : "main-content"
+    },
+    "a_x": "a",
+    "a_attrs":{
+        "data-qa": "author-name"
+    },
+    "t_x": "span",
+    "t_attrs":{
+        "data-testid": "display-date"
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

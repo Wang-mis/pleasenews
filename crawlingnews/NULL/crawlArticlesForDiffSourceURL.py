@@ -280,7 +280,7 @@ if __name__ == "__main__":
     print(PROCESS_GDELT_PATH)
 
     same_struct_domain_list = [
-        "indiatimes.com"
+        "apr.org"
     ]
 
     for tmp_domain in same_struct_domain_list:
@@ -292,27 +292,26 @@ if __name__ == "__main__":
 
         div_article = 'div'
         div_attrs = {
-            "class": "artSyn bgPink"
+            "class": "ArtP-articleBody"
         }
         h_in = False
         h_x = 'h1'
         h_attrs = {
-            "class": "artTitle font_faus"
+            "class": "ArtP-headline"
         }
 
         a_x = 'span'
         a_attrs = {
-            "class": "ag"
+            "class": "ArtP-authorBy"
         }
 
-        t_x = 'time'
+        t_x = 'div'
         t_attrs = {
-            "class" : "jsdtTime"
+            "class": "ArtP-datePublished"
         }
         
-        find_p = 'h2'
+        find_p = 'p'
         p_attrs = {
-            "class": "summary"
         }
 
         # config_dict = Json2Dict("../" + same_struct_domain_list[0] + ".config.json")

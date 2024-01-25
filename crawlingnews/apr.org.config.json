@@ -1,0 +1,23 @@
+{
+    "div_article": "div",
+    "div_attrs": {
+        "class": "ArtP-articleBody"
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+        "class": "ArtP-headline"
+    },
+    "a_x": "span",
+    "a_attrs":{
+        "class": "ArtP-authorBy"
+    },
+    "t_x": "div",
+    "t_attrs":{
+        "class": "ArtP-datePublished"
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

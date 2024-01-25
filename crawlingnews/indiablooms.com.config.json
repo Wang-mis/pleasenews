@@ -1,0 +1,23 @@
+{
+    "div_article": "div",
+    "div_attrs": {
+        "class": "bdyRgContentHolder contentTxt"
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+        
+    },
+    "a_x": "span",
+    "a_attrs":{
+        "class": "author_name"
+    },
+    "t_x": "span",
+    "t_attrs":{
+        "class": "udate"
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

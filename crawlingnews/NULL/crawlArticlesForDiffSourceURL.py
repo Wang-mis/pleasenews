@@ -32,8 +32,8 @@ headers = {
 }
 
 # MERGE Mention 数据集位置
-DAY = "20240121"
-PROCESS_GDELT_PATH = '../../merge/NULL/20240121.media.merge.csv'
+DAY = "20240126"
+PROCESS_GDELT_PATH = '../../merge/NULL/20240122_20240126.media.merge.csv'
 FILTER = "MentionSourceName"  # FILTER = "SOURCEURL"
 SAVE_TXT = "./txt/" + DAY + "/"
 SAVE_ARTICLE = "./articles/" + DAY + "/"
@@ -290,45 +290,49 @@ if __name__ == "__main__":
         error_url_txt = SAVE_TXT + "error_url_" + tmp_domain + ".txt"
 
 
-        div_article = 'div'
-        div_attrs = {
-            "id": "subscription-replace-entire-article"
-        }
-        h_in = False
-        h_x = 'h1'
-        h_attrs = {
+        # 参数手动配置
+        # div_article = 'div'
+        # div_attrs = {
+        #     "id": "subscription-replace-entire-article"
+        # }
+        # h_in = False
+        # h_x = 'h1'
+        # h_attrs = {
             
-        }
+        # }
 
-        a_x = 'div'
-        a_attrs = {
-            "class": "author-details"
-        }
+        # a_x = 'div'
+        # a_attrs = {
+        #     "class": "author-details"
+        # }
 
-        t_x = 'time'
-        t_attrs = {
-            # "class": "mar-article__timestamp"
-        }
+        # t_x = 'time'
+        # t_attrs = {
+        #     # "class": "mar-article__timestamp"
+        # }
         
-        find_p = 'p'
-        p_attrs = {
-        }
+        # find_p = 'p'
+        # p_attrs = {
+        # }
 
-        # config_dict = Json2Dict("../" + same_struct_domain_list[0] + ".config.json")
-        # div_article = config_dict["div_article"]
-        # div_attrs = config_dict["div_attrs"]
-        # h_in = True if config_dict["h_in"] == "True" else False
-        # h_x = config_dict["h_x"]
-        # h_attrs = config_dict["h_attrs"]
 
-        # a_x = config_dict["a_x"]
-        # a_attrs = config_dict["a_attrs"]
 
-        # t_x = config_dict["t_x"]
-        # t_attrs = config_dict["t_attrs"]
+        # 参数自动配置
+        config_dict = Json2Dict("../" + same_struct_domain_list[0] + ".config.json")
+        div_article = config_dict["div_article"]
+        div_attrs = config_dict["div_attrs"]
+        h_in = True if config_dict["h_in"] == "True" else False
+        h_x = config_dict["h_x"]
+        h_attrs = config_dict["h_attrs"]
+
+        a_x = config_dict["a_x"]
+        a_attrs = config_dict["a_attrs"]
+
+        t_x = config_dict["t_x"]
+        t_attrs = config_dict["t_attrs"]
         
-        # find_p = config_dict["find_p"]
-        # p_attrs = config_dict["p_attrs"]
+        find_p = config_dict["find_p"]
+        p_attrs = config_dict["p_attrs"]
 
 
 

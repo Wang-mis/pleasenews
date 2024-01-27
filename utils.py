@@ -239,7 +239,7 @@ def create_date_range(inp:list):
     return result_list
 
 
-TIME_RANGE = [20240121, 20240121]
+TIME_RANGE = [20240122, 20240126]
 
 if __name__ == "__main__":
 

@@ -280,7 +280,27 @@ if __name__ == "__main__":
     print(PROCESS_GDELT_PATH)
 
     same_struct_domain_list = [
-        "yorkpress.co.uk"
+        # "yorkpress.co.uk"
+        # "yahoo.com"
+        # "washingtonpost.com"
+        # "theguardian.com"
+        # "telegraphindia.com"
+        # "tass.com"
+        # "nytimes.com"
+        # "apnews.com"
+        # "apr.org"
+        # "bbc.com"
+        "bbc.co.uk"
+        # "bignewsnetwork.com",
+        # "cnn.com",
+        # "dailymail.co.uk",
+        # "foxnews.com",
+        # "globalsecurity.org",
+        # "indiatimes.com",
+        # "indiablooms.com",
+        # "indianexpress.com",
+        # "jpost.com",
+        # "mirror.co.uk",
     ]
 
     for tmp_domain in same_struct_domain_list:

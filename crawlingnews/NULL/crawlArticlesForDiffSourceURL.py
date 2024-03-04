@@ -290,9 +290,9 @@ if __name__ == "__main__":
         # "apnews.com"
         # "apr.org"
         # "bbc.com"
-        "bbc.co.uk"
-        # "bignewsnetwork.com",
-        # "cnn.com",
+        # "bbc.co.uk"
+        # "bignewsnetwork.com"
+        "cnn.com"
         # "dailymail.co.uk",
         # "foxnews.com",
         # "globalsecurity.org",

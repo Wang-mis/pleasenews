@@ -284,10 +284,29 @@ def test():
     df = pd.read_sql_query(sql,engine)
     print(df)
 
+
+def exportData():
+    # 导出与特朗普相关的数据
+    sql = "SELECT * FROM new_table"
+    #建立dataframe
+    df = pd.read_sql_query(sql, engine)
+    print(len(df))
+    # 内容包括特朗普
+    content_bool = df.Content.str.contains("Donald Trump", na=False)
+    df = df[content_bool]
+    print(len(df))
+    df = df.drop_duplicates(subset=["Content"], keep='first')
+    print(len(df))
+    df.to_csv("new_table.csv", index=False)
+
+
+
 if __name__ == '__main__':
     # writeMergeTable(file_path = "../merge/NULL/20240121.media.merge.csv")
     # writeNewTable(file_path = "../pnews/20240121/MentionSourceNames.csv")
 
-    writeKeywordTable(file_path = "../pnews/20240121/Keywords_check.csv")
+    # writeKeywordTable(file_path = "../pnews/20240121/Keywords_check.csv")
     # test()
+
+    exportData()
     pass

@@ -21,3 +21,7 @@ mentions/**
 crawlingnews/**/articles/**
 
 zlog/
+
+
+merge/NULL/**
+!merge/NULL/20240122_20240126.media.merge.csv

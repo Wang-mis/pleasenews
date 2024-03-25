@@ -103,7 +103,7 @@ def checkMentions(filedir="./mentions/", day="20240121"):
     mentions_csv = os.listdir(mfiledir)
     if len(mentions_csv) != 96:
         haved = [ele.split(".")[0][-6:] for ele in mentions_csv]
-        print("待获取: ", (96 - haved))
+        print("待获取: ", (96 - len(haved)))
         for time in times:
             if time not in haved:
                 print("复检: ", day + time)

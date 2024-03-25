@@ -1,5 +1,5 @@
 {
-    "div_article": "section",
+    "div_article": "div",
     "div_attrs": {
         "itemprop": "articleBody"
     },

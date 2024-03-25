@@ -292,11 +292,11 @@ if __name__ == "__main__":
         # "bbc.com"
         # "bbc.co.uk"
         # "bignewsnetwork.com"
-        "cnn.com"
+        # "cnn.com"
         # "dailymail.co.uk",
         # "foxnews.com",
         # "globalsecurity.org",
-        # "indiatimes.com",
+        "indiatimes.com",
         # "indiablooms.com",
         # "indianexpress.com",
         # "jpost.com",

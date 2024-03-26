@@ -300,7 +300,7 @@ if __name__ == "__main__":
         # "indiablooms.com",
         # "indianexpress.com",
         # "jpost.com",
-        "mirror.co.uk",
+        # "mirror.co.uk",
     ]
 
     for tmp_domain in same_struct_domain_list:

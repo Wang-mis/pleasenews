@@ -4,7 +4,7 @@ import pandas as pd
 from utils import generate_random_string
 
 
-DAY = "20240121"
+DAY = "20240126"
 ARTICLES_PATH = "./crawlingnews/NULL/articles/"+ DAY +"/"
 SAVE_NEWS = "./pnews/"+ DAY +"/"
 

@@ -302,11 +302,13 @@ def exportData():
 
 
 if __name__ == '__main__':
-    # writeMergeTable(file_path = "../merge/NULL/20240121.media.merge.csv")
-    # writeNewTable(file_path = "../pnews/20240121/MentionSourceNames.csv")
+    writeMergeTable(file_path = "../merge/NULL/20240122_20240126.media.merge.csv")
+    writeNewTable(file_path = "../pnews/20240126/MentionSourceNames.csv")
 
-    # writeKeywordTable(file_path = "../pnews/20240121/Keywords_check.csv")
+    writeKeywordTable(file_path = "../pnews/20240126/Keywords_check.csv")
+
+
     # test()
 
-    exportData()
+    # exportData()
     pass

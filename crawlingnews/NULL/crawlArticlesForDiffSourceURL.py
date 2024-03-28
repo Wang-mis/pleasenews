@@ -26,7 +26,8 @@ PROXIES= {
 
 headers = {
     # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.0.0'
+    # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0'
     # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0'
     # 'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36'
 }
@@ -282,7 +283,7 @@ if __name__ == "__main__":
     same_struct_domain_list = [
         # "yorkpress.co.uk"
         # "yahoo.com"
-        "washingtonpost.com"
+        # "washingtonpost.com"
         # "theguardian.com"
         # "telegraphindia.com"
         # "tass.com"
@@ -290,7 +291,7 @@ if __name__ == "__main__":
         # "apnews.com"
         # "apr.org"
         # "bbc.com"
-        # "bbc.co.uk"
+        "bbc.co.uk"
         # "bignewsnetwork.com"
         # "cnn.com"
         # "dailymail.co.uk",

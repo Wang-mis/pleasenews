@@ -32,8 +32,8 @@ headers = {
 }
 
 # MERGE Mention 数据集位置
-DAY = "20240126"
-PROCESS_GDELT_PATH = '../../merge/NULL/20240122_20240126.media.merge.csv'
+DAY = "20240131"
+PROCESS_GDELT_PATH = '../../merge/NULL/20240127_20240131.media.merge.csv'
 FILTER = "MentionSourceName"  # FILTER = "SOURCEURL"
 SAVE_TXT = "./txt/" + DAY + "/"
 SAVE_ARTICLE = "./articles/" + DAY + "/"
@@ -282,7 +282,7 @@ if __name__ == "__main__":
     same_struct_domain_list = [
         # "yorkpress.co.uk"
         # "yahoo.com"
-        # "washingtonpost.com"
+        "washingtonpost.com"
         # "theguardian.com"
         # "telegraphindia.com"
         # "tass.com"

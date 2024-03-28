@@ -104,7 +104,7 @@ def mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_s
 
 
 def merge_medialist():
-    TMPATH = "./merge/NULL/20240122_20240126"
+    TMPATH = "./merge/NULL/20240127_20240131"
     df = pd.read_csv(TMPATH + ".merge.csv")
     df = df[df["MentionSourceName"].isin(MEDIUMLIST)]
     df.to_csv(TMPATH + ".media.merge.csv", index=False)
@@ -120,3 +120,5 @@ if __name__ == "__main__":
     # mergeMentions(mention_path="./mentions/", export_path = "./export/", merge_save= "./merge/", filter=filter)
 
     merge_medialist()
+
+    pass

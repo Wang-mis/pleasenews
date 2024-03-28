@@ -25,3 +25,4 @@ zlog/
 
 merge/NULL/**
 !merge/NULL/20240122_20240126.media.merge.csv
+!merge/NULL/20240127_20240131.media.merge.csv

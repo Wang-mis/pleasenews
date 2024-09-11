@@ -12,9 +12,9 @@
     "a_attrs":{
         "class" : "caas-attr-item-author"
     },
-    "t_x": "div",
+    "t_x": "time",
     "t_attrs":{
-        "class" : "caas-attr-time-style"
+        "class" : "caas-attr-meta-time"
     },
     "find_p": "p",
     "p_attrs":{

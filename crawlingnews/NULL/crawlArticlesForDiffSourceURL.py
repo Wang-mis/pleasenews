@@ -1,6 +1,6 @@
-'''
+"""
 爬取不同域名下相关URL的新闻文章
-'''
+"""
 import pandas as pd
 import os
 import json
@@ -12,43 +12,57 @@ import json
 import zipfile
 import os
 import csv
-import pandas as pd
 import urllib.request
 import urllib.parse
 from lxml import etree
 import re
 from requests.adapters import HTTPAdapter
 
-PROXIES= {
-    'http':'http://127.0.0.1:1080',
-    'https':'http://127.0.0.1:1080'
+from utils import TIME_RANGE, PROCESS_GDELT_PATH, create_date_range
+
+# PROXIES = {
+#     'http': 'http://127.0.0.1:1080',
+#     'https': 'http://127.0.0.1:1080'
+# }
+
+PROXIES = {
+    'http': 'http://127.0.0.1:7890',
+    'https': 'http://127.0.0.1:7890'
 }
 
 headers = {
     # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.0.0'
-    # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0'
-    # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0'
-    # 'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36'
+    # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.0.0',
+    # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0',
+    # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0',
+    # 'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+    'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0",
 }
 
 # MERGE Mention 数据集位置
-DAY = "20240131"
-PROCESS_GDELT_PATH = '../../merge/NULL/20240127_20240131.media.merge.csv'
+# DAY = "20240131"
+# PROCESS_GDELT_PATH = '../../merge/NULL/20240127_20240131.media.merge.csv'
+
+
+DAY = str(TIME_RANGE[0])
+
 FILTER = "MentionSourceName"  # FILTER = "SOURCEURL"
 SAVE_TXT = "./txt/" + DAY + "/"
 SAVE_ARTICLE = "./articles/" + DAY + "/"
 
+
 def make_dirs():
     if not os.path.exists(SAVE_TXT):
         os.makedirs(SAVE_TXT)
-    
+
     if not os.path.exists(SAVE_ARTICLE):
         os.makedirs(SAVE_ARTICLE)
 
+
 def Dict2Json(outfile, data):
-    with open(outfile,'w') as f:
+    with open(outfile, 'w') as f:
         json.dump(data, f)
+
 
 def Json2Dict(file):
     with open(file, 'r') as f:
@@ -69,8 +83,8 @@ def unique_url_about_source_domain(tmp_domian):
     tmp_domain_urls = []
 
     # for i in os.listdir(PROCESS_GDELT_PATH):
-        # tmp = pd.read_csv(PROCESS_GDELT_PATH + i)
-    
+    # tmp = pd.read_csv(PROCESS_GDELT_PATH + i)
+
     tmp = pd.read_csv(PROCESS_GDELT_PATH)
     for row in tmp.itertuples():
         if FILTER == 'MentionSourceName':
@@ -79,20 +93,20 @@ def unique_url_about_source_domain(tmp_domian):
                 tmp_source_url = getattr(row, 'MentionIdentifier')
                 day = getattr(row, 'Day')
                 uniqueId = getattr(row, 'UniqueID')
-                tmp_domain_urls.append(tmp_source_url+"+"+str(day)+"+"+uniqueId)
+                tmp_domain_urls.append(tmp_source_url + "+" + str(day) + "+" + uniqueId)
         if FILTER == 'SOURCEURL':
             source_url_domain = getattr(row, 'SOURCEURL')
             if tmp_domian in source_url_domain.split("//")[-1].split("/")[0]:
                 day = getattr(row, 'Day')
                 uniqueId = getattr(row, 'UniqueID')
-                tmp_domain_urls.append(source_url_domain+"+"+str(day)+"+"+uniqueId)
+                tmp_domain_urls.append(source_url_domain + "+" + str(day) + "+" + uniqueId)
 
     # 去重
     tmp_domain_urls_set = set(tmp_domain_urls)
-    tmp_domain_urls_list = [el+'\n' for el in tmp_domain_urls_set]
+    tmp_domain_urls_list = [el + '\n' for el in tmp_domain_urls_set]
     print("{}域名下新闻文章链接个数为:{}".format(tmp_domian, len(tmp_domain_urls_list)))
     # 保存
-    f=open(unique_path, "w")
+    f = open(unique_path, "w")
     f.writelines(tmp_domain_urls_list)
     f.close()
 
@@ -101,35 +115,32 @@ def unique_url_about_source_domain(tmp_domian):
 
 # 读取出错的url继续爬取文章
 def regen_tmp_domain_urls_set(tmp_domain):
-    unique_path = SAVE_TXT + 'unique_url_about_' + tmp_domain +'.txt'
-    error_path = SAVE_TXT + 'error_url_' + tmp_domain +'.txt'
-    
+    unique_path = SAVE_TXT + 'unique_url_about_' + tmp_domain + '.txt'
+    error_path = SAVE_TXT + 'error_url_' + tmp_domain + '.txt'
+
     fr = open(unique_path)
     lines = fr.readlines()
     fr.close()
-    
+
     url_data = {}
     for line in lines:
-        url_data[line.strip().split('+')[0]] = line.strip().split('+')[1] +"+" + line.strip().split('+')[2]
+        url_data[line.strip().split('+')[0]] = line.strip().split('+')[1] + "+" + line.strip().split('+')[2]
 
     fr = open(error_path)
     lines = fr.readlines()
     fr.close()
-    
-    tmp_domain_urls_set = set([line.strip()+"+"+url_data[line.strip()] for line in lines])
+
+    tmp_domain_urls_set = set([line.strip() + "+" + url_data[line.strip()] for line in lines])
     return tmp_domain_urls_set
 
 
-
 def generate_random_str(randomlength=16):
-    random_str =''
-    base_str ='ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789'
-    length =len(base_str) -1
+    random_str = ''
+    base_str = 'ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789'
+    length = len(base_str) - 1
     for i in range(randomlength):
-        random_str +=base_str[random.randint(0, length)]
+        random_str += base_str[random.randint(0, length)]
     return random_str
-
-
 
 
 def craw_articles(
@@ -139,37 +150,43 @@ def craw_articles(
         h_x='h1', h_attrs={},
         a_x='span', a_attrs={},
         t_x='span', t_attrs={},
-        find_p=['p'], p_attrs={} ): # use_sub是否创建子文件夹
-    
-    error_url = [] # 保存出错的URL
+        find_p=['p'], p_attrs={}):  # use_sub是否创建子文件夹
+
+    error_url = []  # 保存出错的URL
+
     for urli in tmp_domain_urls_set:
         try:
+            url = urli.split("+")[0]  # 获取链接
+            day = urli.split("+")[1]  # 获取时间
+            uniqueId = urli.split("+")[2]  # 获取uniqueID
+
+            sub_path = SAVE_ARTICLE + tmp_domain + "/"
+            article_path = sub_path + uniqueId + ".txt"
+            if os.path.exists(article_path):
+                continue
+
+            if use_sub:  # 获取子域 创建子域文件夹
+                sub_tmp_domain = urli.split(tmp_domain + "/")[-1].split("/")[0]
+                sub_path = SAVE_ARTICLE + tmp_domain + "/" + sub_tmp_domain + "/"
+
+            if not os.path.exists(sub_path):
+                os.makedirs(sub_path)
+
+            # 获取网页
             sess = requests.Session()
             sess.mount('http://', HTTPAdapter(max_retries=10))
             sess.mount('https://', HTTPAdapter(max_retries=10))
             sess.keep_alive = False
 
-            url = urli.split("+")[0]
-            day = urli.split("+")[1] # 获取链接与时间
-            uniqueId = urli.split("+")[2] # 获取链接与时间
+            test_request = requests.get(url, proxies=PROXIES, headers=headers, timeout=30)  # , verify=False)
+            test_request.close()
 
-            sub_path = SAVE_ARTICLE + tmp_domain+"/"
-            
-            if use_sub: # 获取子域 创建子域文件夹
-                sub_tmp_domain = urli.split(tmp_domain + "/")[-1].split("/")[0]
-                sub_path = SAVE_ARTICLE + tmp_domain+"/" + sub_tmp_domain+"/"
-            
-            if not os.path.exists(sub_path):
-                os.makedirs(sub_path)
-            
-            # 获取网页
-            test_request = requests.get(url, proxies=PROXIES, headers=headers, timeout=30) #, verify=False)
-            print("state code: ", test_request.status_code)
-            
             # 保存出错的URL
             if test_request.status_code != 200:
-                error_url.append(url+'\n')
-            
+                print("state code: ", test_request.status_code)
+                print(test_request.text)
+                error_url.append(url + '\n')
+
             # 解析网页
             content = test_request.text
             soup = BeautifulSoup(content, 'html.parser')
@@ -191,8 +208,8 @@ def craw_articles(
 
             new_paragraph_list = []
             for ele_p in find_p:
-                new_paragraph_list += content_div.find_all(ele_p, attrs=p_attrs) # paragraphs
-            
+                new_paragraph_list += content_div.find_all(ele_p, attrs=p_attrs)  # paragraphs
+
             # 保存
             article = []
 
@@ -202,17 +219,17 @@ def craw_articles(
                 if h.text.strip() == '':
                     continue
 
-                title = h.text.strip().replace('\n',' ').replace('\r',' ')
-                title = re.sub(r"\s+", " ", title)
-                article.append(title+'\n') # 将标题写入文件
+                title = h.text.strip().replace('\n', ' ').replace('\r', ' ')
+                title = re.sub(r"\s+", " ", title)  # 将标题中的\f \n \t \r \v换成空格
+                article.append(title + '\n')  # 将标题写入文件
 
                 simple_punctuation = '[!"‘’“”#$%&\'()*+,-/:;<=>?@[\\]^_`{|}~，。,]'
-                title = re.sub('[\u4e00-\u9fa5]','',h.text)
-                title = re.sub(simple_punctuation, '', title)
-                title = title.replace('\n',' ').replace('\r',' ').strip()
+                title = re.sub('[\u4e00-\u9fa5]', '', h.text)  # 删除标题中的中文
+                title = re.sub(simple_punctuation, '', title)  # 删除标题中的各种符号
+                title = title.replace('\n', ' ').replace('\r', ' ').strip()
 
                 print("title=============", title)
-                break # 找到一个标题不为空就满足条件
+                break  # 找到一个标题不为空就满足条件
 
             if title == '_':
                 title = day + "+ " + generate_random_str()
@@ -225,91 +242,89 @@ def craw_articles(
             for a in authorList:
                 if a.text.strip() == '':
                     continue
-                author = a.text.strip().replace('\n',' ').replace('\r',' ')
+                author = a.text.strip().replace('\n', ' ').replace('\r', ' ')
                 author = re.sub(r"\s+", " ", author)
                 print("author=============", author)
                 break
-            article.append(author+'\n')
+            article.append(author + '\n')
 
             # =============================发布时间=============================
             time = '_'
             for t in timeList:
                 if t.text.strip() == '':
                     continue
-                time = t.text.strip().replace('\n',' ').replace('\r',' ')
+                time = t.text.strip().replace('\n', ' ').replace('\r', ' ')
                 time = re.sub(r"\s+", " ", time)
                 print("time=============", time)
                 break
-            article.append(time+'\n')
-            
-            
-            article.append(day+"\n")
-            article.append(url+"\n")
-            
+            article.append(time + '\n')
+
+            article.append(day + "\n")
+            article.append(url + "\n")
+
             # new_paragraph_list = content_div.find('div',attrs={'class':'article-text ds-container svelte-1efvmlf'})
             # print(new_paragraph_list)
 
             for p in new_paragraph_list:
                 paragraph = p.text
-                paragraph = paragraph.encode("utf8", 'ignore').decode("utf8", "ignore") # gbk编码报错
+                paragraph = paragraph.encode("utf8", 'ignore').decode("utf8", "ignore")  # gbk编码报错
                 # paragraph=re.sub('[\u4e00-\u9fa5]', '', paragraph)
                 # simple_punctuation = '[‘’“”–，。]'
                 # paragraph = re.sub(simple_punctuation, '', paragraph)
-                paragraph = paragraph.replace('\n',' ').replace('\r',' ').strip()
+                paragraph = paragraph.replace('\n', ' ').replace('\r', ' ').strip()
 
-                article.append(paragraph+'\n')
+                article.append(paragraph + '\n')
 
             # f=open(sub_path + title + ".txt","w", encoding='utf8') 
-            f=open(sub_path + uniqueId + ".txt","w", encoding='utf8') 
+            f = open(article_path, "w", encoding='utf8')
             f.writelines(article)
             f.close()
-        
+
         except Exception as e:
-            print("Exception: ",e)
-            print("URL: ",url)
-            error_url.append(url+'\n')
-    
+            print("Exception: ", e)
+            print("URL: ", url)
+            error_url.append(url + '\n')
+
     # 保存出错的URL
-    f=open(SAVE_TXT + "error_url_" + tmp_domain + ".txt","w") 
+    f = open(SAVE_TXT + "error_url_" + tmp_domain + ".txt", "w")
     f.writelines(error_url)
     f.close()
 
-if __name__ == "__main__":
 
+def craw():
     make_dirs()
-    
+
     print(PROCESS_GDELT_PATH)
 
     same_struct_domain_list = [
-        # "yorkpress.co.uk"
-        # "yahoo.com"
-        # "washingtonpost.com"
-        # "theguardian.com"
-        # "telegraphindia.com"
-        # "tass.com"
-        # "nytimes.com"
-        # "apnews.com"
-        # "apr.org"
-        # "bbc.com"
-        "bbc.co.uk"
-        # "bignewsnetwork.com"
-        # "cnn.com"
-        # "dailymail.co.uk",
-        # "foxnews.com",
-        # "globalsecurity.org",
-        # "indiatimes.com",
-        # "indiablooms.com",
-        # "indianexpress.com",
-        # "jpost.com",
-        # "mirror.co.uk",
+        # "yorkpress.co.uk",
+        # "yahoo.com", # 8000+
+        "washingtonpost.com",  # 0
+        # "theguardian.com",  # 526
+        "telegraphindia.com",  # 0
+        # "tass.com",  # 49
+        # "nytimes.com",  # 232!
+        # "apnews.com",  # 172
+        # "apr.org",  # 55
+        # "bbc.com",  # 318!
+        # "bbc.co.uk",  # 238!
+        # "bignewsnetwork.com", # 1138
+        "cnn.com",  # 459
+        # "dailymail.co.uk", # 1254
+        # "foxnews.com",  # 343!
+        "globalsecurity.org",  # 409
+        # "indiatimes.com", # 2586
+        "indiablooms.com",  # 86
+        # "indianexpress.com",  # 747
+        "jpost.com",  # 307
+        # "mirror.co.uk",  # 641
     ]
 
     for tmp_domain in same_struct_domain_list:
-        
+
         print(tmp_domain)
 
         error_url_txt = SAVE_TXT + "error_url_" + tmp_domain + ".txt"
-
 
         # 参数手动配置
         # div_article = 'div'
@@ -319,7 +334,7 @@ if __name__ == "__main__":
         # h_in = False
         # h_x = 'h1'
         # h_attrs = {
-            
+
         # }
 
         # a_x = 'div'
@@ -331,15 +346,13 @@ if __name__ == "__main__":
         # t_attrs = {
         #     # "class": "mar-article__timestamp"
         # }
-        
+
         # find_p = 'p'
         # p_attrs = {
         # }
 
-
-
         # 参数自动配置
-        config_dict = Json2Dict("../" + same_struct_domain_list[0] + ".config.json")
+        config_dict = Json2Dict("../" + tmp_domain + ".config.json")
         div_article = config_dict["div_article"]
         div_attrs = config_dict["div_attrs"]
         h_in = True if config_dict["h_in"] == "True" else False
@@ -351,21 +364,36 @@ if __name__ == "__main__":
 
         t_x = config_dict["t_x"]
         t_attrs = config_dict["t_attrs"]
-        
+
         find_p = config_dict["find_p"]
         p_attrs = config_dict["p_attrs"]
-
-
-
-
 
         # 第一次爬取 没有出现error_url_tmp_domian.txt
         if not os.path.exists(error_url_txt):
             tmp_domain_urls_set = unique_url_about_source_domain(tmp_domain)
-            craw_articles(tmp_domain_urls_set,tmp_domain, div_article=div_article, div_attrs=div_attrs, use_sub=False, h_x=h_x, h_in=h_in, h_attrs=h_attrs, a_x=a_x, a_attrs=a_attrs, t_x=t_x, t_attrs=t_attrs, find_p=find_p, p_attrs=p_attrs)
+            craw_articles(tmp_domain_urls_set, tmp_domain, div_article=div_article, div_attrs=div_attrs, use_sub=False,
+                          h_x=h_x, h_in=h_in, h_attrs=h_attrs, a_x=a_x, a_attrs=a_attrs, t_x=t_x, t_attrs=t_attrs,
+                          find_p=find_p, p_attrs=p_attrs)
         else:
             print("已经出现")
             # 再次获取出错的链接文章
             tmp_domain_urls_set = regen_tmp_domain_urls_set(tmp_domain)
-            craw_articles(tmp_domain_urls_set,tmp_domain, div_article=div_article, div_attrs=div_attrs, use_sub=False, h_x=h_x, h_in=h_in, h_attrs=h_attrs, a_x=a_x, a_attrs=a_attrs, t_x=t_x, t_attrs=t_attrs, find_p=find_p, p_attrs=p_attrs)
+            craw_articles(tmp_domain_urls_set, tmp_domain, div_article=div_article, div_attrs=div_attrs, use_sub=False,
+                          h_x=h_x, h_in=h_in, h_attrs=h_attrs, a_x=a_x, a_attrs=a_attrs, t_x=t_x, t_attrs=t_attrs,
+                          find_p=find_p, p_attrs=p_attrs)
 
+
+def crawl_days():
+    global DAY, SAVE_TXT, SAVE_ARTICLE
+
+    days = create_date_range(TIME_RANGE)
+
+    for day in days:
+        DAY = str(day)
+        SAVE_TXT = "./txt/" + DAY + "/"
+        SAVE_ARTICLE = "./articles/" + DAY + "/"
+        craw()
+
+
+if __name__ == "__main__":
+    crawl_days()

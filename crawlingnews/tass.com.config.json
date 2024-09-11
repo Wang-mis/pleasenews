@@ -12,9 +12,9 @@
     "a_attrs":{
         "class" : "Page-authors"
     },
-    "t_x": "div",
+    "t_x": "span",
     "t_attrs":{
-        "class" : "Page-dateModified"
+        "class" : "ng-binding ng-scope"
     },
     "find_p": "p",
     "p_attrs":{

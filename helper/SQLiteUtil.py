@@ -1,11 +1,12 @@
-
 import sqlite3
+
 
 class SqliteTool():
     """
        简单sqlite数据库工具类
        编写这个类主要是为了封装sqlite，继承此类复用方法
        """
+
     def __init__(self, dbName="sqlite3Test.db"):
         """
         初始化连接——使用完需关闭连接
@@ -23,7 +24,7 @@ class SqliteTool():
         """
         self._cur.close()
         self._conn.close()
-    
+
     # 创建数据表
     def create_tabel(self, sql: str):
         """
@@ -38,7 +39,7 @@ class SqliteTool():
             return True
         except Exception as e:
             print("[create table error]", e)
-    
+
     # 删除数据表
     def drop_table(self, sql: str):
         """
@@ -53,7 +54,7 @@ class SqliteTool():
         except Exception as e:
             print("[drop table error]", e)
             return False
-    
+
     # 插入或更新表数据，一次插入或更新一条数据
     def operate_one(self, sql: str, value: tuple):
         """
@@ -74,8 +75,9 @@ class SqliteTool():
             print("[insert/update one record error]", e)
             self._conn.rollback()
             return False
+
     # 插入或更新表数据，一次插入或更新多条数据
-    
+
     def operate_many(self, sql: str, value: list):
         """
         插入或更新多条表记录
@@ -96,7 +98,7 @@ class SqliteTool():
             print("[insert/update many  records error]", e)
             self._conn.rollback()
             return False
-    
+
     # 删除表数据
     def delete_record(self, sql: str):
         """
@@ -116,7 +118,7 @@ class SqliteTool():
         except Exception as e:
             print("[detele record error]", e)
             return False
-    
+
     # 查询一条数据
     def query_one(self, sql: str, params=None):
         """
@@ -136,7 +138,7 @@ class SqliteTool():
             return r
         except Exception as e:
             print("[select one record error]", e)
-    
+
     # 查询多条数据
     def query_many(self, sql: str, params=None):
         """
@@ -195,7 +197,7 @@ if __name__ == '__main__':
     # 创建游标
     cur = conn.cursor()
     # result_one = cur.execute("select * from info")
-    result_one = cur.execute("select * from info where name= ? ", ('Tom3', ))
+    result_one = cur.execute("select * from info where name= ? ", ('Tom3',))
     print(result_one.fetchall())
     all_logs = result_one.fetchall()
     for log in all_logs:

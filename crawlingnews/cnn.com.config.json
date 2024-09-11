@@ -6,7 +6,7 @@
     "h_in": "False",
     "h_x": "h1",
     "h_attrs":{
-        "class": "headline__text inline-placeholder"
+        "class": "headline__text"
     },
     "a_x": "div",
     "a_attrs":{

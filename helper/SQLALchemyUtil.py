@@ -1,15 +1,16 @@
-
 from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, DECIMAL, Float, Text
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 import pandas as pd
 
+from utils import TIME_RANGE, create_date_range
 
 # engine = create_engine('sqlite:///:memory:', echo=True)
 engine = create_engine('sqlite:///SQLiteTest.db?check_same_thread=False', echo=True)
 
 Base = declarative_base()
+
 
 class MergeItem(Base):
     __tablename__ = 'merge_table'
@@ -108,89 +109,92 @@ class MergeItem(Base):
     # 为了唯一标记一篇新闻文章
     UniqueID = Column(String)
 
+
 def gainMergeItem(row):
     return MergeItem(
-        GlobalEventID = row[0],
-        Day = row[1],
-        MonthYear = row[2],
-        Year = row[3],
-        FractionDate = row[4],
-        Actor1Code = row[5],
-        Actor1Name = row[6],
-        Actor1CountryCode = row[7],
-        Actor1KnownGroupCode = row[8],
-        Actor1EthnicCode = row[9],
-        Actor1Religion1Code = row[10],
-        Actor1Religion2Code = row[11],
-        Actor1Type1Code = row[12],
-        Actor1Type2Code = row[13],
-        Actor1Type3Code = row[14],
-        Actor2Code = row[15],
-        Actor2Name = row[16],
-        Actor2CountryCode = row[17],
-        Actor2KnownGroupCode = row[18],
-        Actor2EthnicCode = row[19],
-        Actor2Religion1Code = row[20],
-        Actor2Religion2Code = row[21],
-        Actor2Type1Code = row[22],
-        Actor2Type2Code = row[23],
-        Actor2Type3Code = row[24],
-        IsRootEvent = row[25],
-        EventCode = row[26],
-        EventBaseCode = row[27],
-        EventRootCode = row[28],
-        QuadClass = row[29],
-        GoldsteinScale = row[30],
-        NumMentions = row[31],
-        NumSources = row[32],
-        NumArticles = row[33],
-        AvgTone = row[34],
-        Actor1Geo_Type = row[35],
-        Actor1Geo_Fullname = row[36],
-        Actor1Geo_CountryCode = row[37],
-        Actor1Geo_ADM1Code = row[38],
-        Actor1Geo_Lat = row[39],
-        Actor1Geo_Long = row[40],
-        Actor1Geo_FeatureID = row[41],
-        Actor2Geo_Type = row[42],
-        Actor2Geo_Fullname = row[43],
-        Actor2Geo_CountryCode = row[44],
-        Actor2Geo_ADM1Code = row[45],
-        Actor2Geo_Lat = row[46],
-        Actor2Geo_Long = row[47],
-        Actor2Geo_FeatureID = row[48],
-        ActionGeo_Type = row[49],
-        ActionGeo_Fullname = row[50],
-        ActionGeo_CountryCode = row[51],
-        ActionGeo_ADM1Code = row[52],
-        ActionGeo_Lat = row[53],
-        ActionGeo_Long = row[54],
-        ActionGeo_FeatureID = row[55],
-        DATEADDED = row[56],
-        SOURCEURL = row[57],
-        EventTimeDate = row[58],
-        MentionTimeDate = row[59],
-        MentionType = row[60],
-        MentionSourceName = row[61],
-        MentionIdentifier = row[62],
-        SentenceID = row[63],
-        Actor1CharOffset = row[64],
-        Actor2CharOffset = row[65],
-        ActionCharOffset = row[66],
-        InRawText = row[67],
-        Confidence = row[68],
-        MentionDocLen = row[69],
-        MentionDocTone = row[70],
-        MentionDocTranslationInfo = row[71],
-        Extras = row[72],
-        UniqueID = row[73]
+        GlobalEventID=row[0],
+        Day=row[1],
+        MonthYear=row[2],
+        Year=row[3],
+        FractionDate=row[4],
+        Actor1Code=row[5],
+        Actor1Name=row[6],
+        Actor1CountryCode=row[7],
+        Actor1KnownGroupCode=row[8],
+        Actor1EthnicCode=row[9],
+        Actor1Religion1Code=row[10],
+        Actor1Religion2Code=row[11],
+        Actor1Type1Code=row[12],
+        Actor1Type2Code=row[13],
+        Actor1Type3Code=row[14],
+        Actor2Code=row[15],
+        Actor2Name=row[16],
+        Actor2CountryCode=row[17],
+        Actor2KnownGroupCode=row[18],
+        Actor2EthnicCode=row[19],
+        Actor2Religion1Code=row[20],
+        Actor2Religion2Code=row[21],
+        Actor2Type1Code=row[22],
+        Actor2Type2Code=row[23],
+        Actor2Type3Code=row[24],
+        IsRootEvent=row[25],
+        EventCode=row[26],
+        EventBaseCode=row[27],
+        EventRootCode=row[28],
+        QuadClass=row[29],
+        GoldsteinScale=row[30],
+        NumMentions=row[31],
+        NumSources=row[32],
+        NumArticles=row[33],
+        AvgTone=row[34],
+        Actor1Geo_Type=row[35],
+        Actor1Geo_Fullname=row[36],
+        Actor1Geo_CountryCode=row[37],
+        Actor1Geo_ADM1Code=row[38],
+        Actor1Geo_Lat=row[39],
+        Actor1Geo_Long=row[40],
+        Actor1Geo_FeatureID=row[41],
+        Actor2Geo_Type=row[42],
+        Actor2Geo_Fullname=row[43],
+        Actor2Geo_CountryCode=row[44],
+        Actor2Geo_ADM1Code=row[45],
+        Actor2Geo_Lat=row[46],
+        Actor2Geo_Long=row[47],
+        Actor2Geo_FeatureID=row[48],
+        ActionGeo_Type=row[49],
+        ActionGeo_Fullname=row[50],
+        ActionGeo_CountryCode=row[51],
+        ActionGeo_ADM1Code=row[52],
+        ActionGeo_Lat=row[53],
+        ActionGeo_Long=row[54],
+        ActionGeo_FeatureID=row[55],
+        DATEADDED=row[56],
+        SOURCEURL=row[57],
+        EventTimeDate=row[58],
+        MentionTimeDate=row[59],
+        MentionType=row[60],
+        MentionSourceName=row[61],
+        MentionIdentifier=row[62],
+        SentenceID=row[63],
+        Actor1CharOffset=row[64],
+        Actor2CharOffset=row[65],
+        ActionCharOffset=row[66],
+        InRawText=row[67],
+        Confidence=row[68],
+        MentionDocLen=row[69],
+        MentionDocTone=row[70],
+        MentionDocTranslationInfo=row[71],
+        Extras=row[72],
+        UniqueID=row[73]
     )
 
 
-def writeMergeTable(file_path = "../merge/NULL/20240110_20240120.merge.csv"):
+def writeMergeTable(file_path="../merge/NULL/20240110_20240120.merge.csv"):
+    """ 将CSV转换为表 """
+
     Base.metadata.create_all(engine, checkfirst=True)
     Session = sessionmaker(bind=engine)
-    session = Session() # 实例化会话
+    session = Session()  # 实例化会话
 
     data = pd.read_csv(file_path).fillna("")
     merge_list = []
@@ -198,7 +202,7 @@ def writeMergeTable(file_path = "../merge/NULL/20240110_20240120.merge.csv"):
         merge_list.append(gainMergeItem(row.tolist()))
 
     session.add_all(merge_list)
-    session.commit() # 提交数据
+    session.commit()  # 提交数据
     session.close()
 
 
@@ -219,22 +223,24 @@ class NewItem(Base):
     MentionIdentifier = Column(String)
     Content = Column(Text)
 
+
 def gainNewItem(row):
     return NewItem(
-        UniqueID = row[0],
-        Title = row[1],
-        Author = row[2],
-        PTime = row[3],
-        DTime = row[4],
-        MentionSourceName = row[5],
-        MentionIdentifier = row[6],
-        Content = row[7]
+        UniqueID=row[0],
+        Title=row[1],
+        Author=row[2],
+        PTime=row[3],
+        DTime=row[4],
+        MentionSourceName=row[5],
+        MentionIdentifier=row[6],
+        Content=row[7]
     )
 
-def writeNewTable(file_path = "../pnews/20240120/MentionSourceNames.csv"):
+
+def writeNewTable(file_path="../pnews/20240120/MentionSourceNames.csv"):
     Base.metadata.create_all(engine, checkfirst=True)
     Session = sessionmaker(bind=engine)
-    session = Session() # 实例化会话
+    session = Session()  # 实例化会话
 
     data = pd.read_csv(file_path).fillna("")
     merge_list = []
@@ -242,9 +248,8 @@ def writeNewTable(file_path = "../pnews/20240120/MentionSourceNames.csv"):
         merge_list.append(gainNewItem(row.tolist()))
 
     session.add_all(merge_list)
-    session.commit() # 提交数据
+    session.commit()  # 提交数据
     session.close()
-
 
 
 # 关键词表
@@ -257,16 +262,18 @@ class KeywordItem(Base):
     UniqueID = Column(String)
     Keyword = Column(Text)
 
+
 def gainKeywordItem(row):
     return KeywordItem(
-        UniqueID = row[0],
-        Keyword = row[1]
+        UniqueID=row[0],
+        Keyword=row[1]
     )
 
-def writeKeywordTable(file_path = "../pnews/20240109/Keywords_check.csv"):
+
+def writeKeywordTable(file_path="../pnews/20240109/Keywords_check.csv"):
     Base.metadata.create_all(engine, checkfirst=True)
     Session = sessionmaker(bind=engine)
-    session = Session() # 实例化会话
+    session = Session()  # 实例化会话
 
     data = pd.read_csv(file_path).fillna("")
     merge_list = []
@@ -274,21 +281,22 @@ def writeKeywordTable(file_path = "../pnews/20240109/Keywords_check.csv"):
         merge_list.append(gainKeywordItem(row.tolist()))
 
     session.add_all(merge_list)
-    session.commit() # 提交数据
+    session.commit()  # 提交数据
     session.close()
+
 
 def test():
     # 写一条sql
-    sql = "SELECT COUNT(*) FROM keyword_table" # merge_table"
-    #建立dataframe
-    df = pd.read_sql_query(sql,engine)
+    sql = "SELECT COUNT(*) FROM keyword_table"  # merge_table"
+    # 建立dataframe
+    df = pd.read_sql_query(sql, engine)
     print(df)
 
 
 def exportData():
     # 导出与特朗普相关的数据
     sql = "SELECT * FROM new_table"
-    #建立dataframe
+    # 建立dataframe
     df = pd.read_sql_query(sql, engine)
     print(len(df))
     # 内容包括特朗普
@@ -300,13 +308,20 @@ def exportData():
     df.to_csv("new_table.csv", index=False)
 
 
-
 if __name__ == '__main__':
-    writeMergeTable(file_path = "../merge/NULL/20240122_20240126.media.merge.csv")
-    writeNewTable(file_path = "../pnews/20240126/MentionSourceNames.csv")
+    # writeMergeTable(file_path="../merge/NULL/20240122_20240126.media.merge.csv")
+    # writeNewTable(file_path="../pnews/20240126/MentionSourceNames.csv")
+    # writeKeywordTable(file_path="../pnews/20240126/Keywords_check.csv")
 
-    writeKeywordTable(file_path = "../pnews/20240126/Keywords_check.csv")
+    MEDIA_MERGE_PATH = "../merge/NULL/" + str(TIME_RANGE[0]) + "_" + str(TIME_RANGE[1]) + ".media.merge.csv"
+    writeMergeTable(file_path=MEDIA_MERGE_PATH)
 
+    days = create_date_range(TIME_RANGE)
+    for day in days:
+        MENTION_PATH = "../pnews/" + str(day) + "/MentionSourceNames.csv"
+        KEYWORDS_PATH = "../pnews/" + str(day) + "/Keywords_check.csv"
+        writeNewTable(file_path=MENTION_PATH)
+        writeKeywordTable(file_path=KEYWORDS_PATH)
 
     # test()
 

@@ -1,16 +1,16 @@
-
 import os
 import pandas as pd
-from utils import generate_random_string
+from utils import generate_random_string, create_date_range, TIME_RANGE
 
+DAY = "20240901"
+ARTICLES_PATH = "./crawlingnews/NULL/articles/" + DAY + "/"
+SAVE_NEWS = "./pnews/" + DAY + "/"
 
-DAY = "20240126"
-ARTICLES_PATH = "./crawlingnews/NULL/articles/"+ DAY +"/"
-SAVE_NEWS = "./pnews/"+ DAY +"/"
 
 def make_dirs():
     if not os.path.exists(SAVE_NEWS):
         os.makedirs(SAVE_NEWS)
+
 
 def readArticle(article_path):
     fr = open(article_path, encoding="utf-8")
@@ -30,7 +30,7 @@ def mergeArticles():
 
     sub_merge_dfs = []
 
-    for medium in mediumList: # 遍历每一个媒体
+    for medium in mediumList:  # 遍历每一个媒体
         articles = os.listdir(ARTICLES_PATH + medium + "/")
 
         data = {
@@ -39,7 +39,7 @@ def mergeArticles():
             "Author": [],
             "PTime": [],
             "DTime": [],
-            "MentionSourceName":[],
+            "MentionSourceName": [],
             "MentionIdentifier": [],
             "Content": [],
         }
@@ -47,8 +47,8 @@ def mergeArticles():
         m_len = 0
         for index, article in enumerate(articles):
             title, author, ptime, dtime, url, content, len = readArticle(ARTICLES_PATH + medium + "/" + article)
-            
-            data["UniqueID"].append(article.split(".")[0]) # txt文本文件的名称就是UniqueID
+
+            data["UniqueID"].append(article.split(".")[0])  # txt文本文件的名称就是UniqueID
             data["Title"].append(title)
             data["Author"].append(author)
             data["PTime"].append(ptime)
@@ -61,7 +61,7 @@ def mergeArticles():
 
         df = pd.DataFrame(data)
         df.to_csv(SAVE_NEWS + medium + ".csv", index=False)
-        
+
         print(m_len)
 
         sub_merge_dfs.append(df)
@@ -70,7 +70,18 @@ def mergeArticles():
     all_merge_dfs.to_csv(SAVE_NEWS + "MentionSourceNames.csv", index=False)
 
 
+def process_articles():
+    global DAY, ARTICLES_PATH, SAVE_NEWS
+
+    days = create_date_range(TIME_RANGE)
+
+    for day in days:
+        DAY = str(day)
+        ARTICLES_PATH = "./crawlingnews/NULL/articles/" + DAY + "/"
+        SAVE_NEWS = "./pnews/" + DAY + "/"
+        make_dirs()
+        mergeArticles()
+
+
 if __name__ == "__main__":
-    make_dirs()
-    
-    mergeArticles()
+    process_articles()

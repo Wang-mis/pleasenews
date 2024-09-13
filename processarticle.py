@@ -3,8 +3,8 @@ import pandas as pd
 from utils import generate_random_string, create_date_range, TIME_RANGE
 
 DAY = "20240901"
-ARTICLES_PATH = "./crawlingnews/NULL/articles/" + DAY + "/"
-SAVE_NEWS = "./pnews/" + DAY + "/"
+ARTICLES_PATH = "crawlingnews/NULL/articles/" + DAY + "/"
+SAVE_NEWS = "pnews/" + DAY + "/"
 
 
 def make_dirs():
@@ -77,8 +77,8 @@ def process_articles():
 
     for day in days:
         DAY = str(day)
-        ARTICLES_PATH = "./crawlingnews/NULL/articles/" + DAY + "/"
-        SAVE_NEWS = "./pnews/" + DAY + "/"
+        ARTICLES_PATH = "crawlingnews/NULL/articles/" + DAY + "/"
+        SAVE_NEWS = "pnews/" + DAY + "/"
         make_dirs()
         mergeArticles()
 

@@ -308,22 +308,17 @@ def exportData():
     df.to_csv("new_table.csv", index=False)
 
 
-if __name__ == '__main__':
-    # writeMergeTable(file_path="../merge/NULL/20240122_20240126.media.merge.csv")
-    # writeNewTable(file_path="../pnews/20240126/MentionSourceNames.csv")
-    # writeKeywordTable(file_path="../pnews/20240126/Keywords_check.csv")
-
-    MEDIA_MERGE_PATH = "../merge/NULL/" + str(TIME_RANGE[0]) + "_" + str(TIME_RANGE[1]) + ".media.merge.csv"
+def to_sql():
+    MEDIA_MERGE_PATH = "merge/NULL/" + str(TIME_RANGE[0]) + "_" + str(TIME_RANGE[1]) + ".media.merge.csv"
     writeMergeTable(file_path=MEDIA_MERGE_PATH)
 
     days = create_date_range(TIME_RANGE)
     for day in days:
-        MENTION_PATH = "../pnews/" + str(day) + "/MentionSourceNames.csv"
-        KEYWORDS_PATH = "../pnews/" + str(day) + "/Keywords_check.csv"
+        MENTION_PATH = "pnews/" + str(day) + "/MentionSourceNames.csv"
+        KEYWORDS_PATH = "pnews/" + str(day) + "/Keywords_check.csv"
         writeNewTable(file_path=MENTION_PATH)
         writeKeywordTable(file_path=KEYWORDS_PATH)
 
-    # test()
 
-    # exportData()
-    pass
+if __name__ == '__main__':
+    to_sql()

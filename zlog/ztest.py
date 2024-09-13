@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-import spacy
 from keybert import KeyBERT
 from tqdm import tqdm
 from utils import create_date_range, TIME_RANGE
@@ -9,13 +8,10 @@ os.environ['HTTPS_PROXY'] = 'http://127.0.0.1:7890'
 os.environ["HTTP_PROXY"] = 'http://127.0.0.1:7890'
 
 DAY = "20240901"
-SAVE_NEWS = "../pnews/" + DAY + "/"
+SAVE_NEWS = "pnews/" + DAY + "/"
 MEIDA_CONTENT = SAVE_NEWS + "MentionSourceNames.csv"
 MEDIA_KEYWORD = SAVE_NEWS + "Keywords.csv"
 MEDIA_KEYWORD_CHECK = SAVE_NEWS + "Keywords_check.csv"
-
-SPACY = spacy.load('en_core_web_sm')
-
 
 def generate_keywords_by_KeyBERT():
     df = pd.read_csv(MEIDA_CONTENT)
@@ -28,8 +24,6 @@ def generate_keywords_by_KeyBERT():
     process_bar = tqdm(total=len(UniqueIDList), desc=DAY + " 生成关键词中")
     for index, content in enumerate(ContentList):
         try:
-            doc = SPACY(content)
-            content = " ".join([token.lemma_ for token in doc])
             keywords = kw_model.extract_keywords(content, keyphrase_ngram_range=(1, 1), stop_words='english', top_n=15)
             keywords = "|".join([ele[0] for ele in keywords])
             KeywordList.append(keywords)
@@ -77,7 +71,7 @@ def get_keywords():
     days = create_date_range(TIME_RANGE)
     for day in days:
         DAY = str(day)
-        SAVE_NEWS = "../pnews/" + DAY + "/"
+        SAVE_NEWS = "pnews/" + DAY + "/"
         MEIDA_CONTENT = SAVE_NEWS + "MentionSourceNames.csv"
         MEDIA_KEYWORD = SAVE_NEWS + "Keywords.csv"
         MEDIA_KEYWORD_CHECK = SAVE_NEWS + "Keywords_check.csv"

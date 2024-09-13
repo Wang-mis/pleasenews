@@ -12,5 +12,17 @@ db.sqlite3-journal
 # Jupyter Notebook
 .ipynb_checkpoints
 
-!SQLite.log
+crawlingnews/NULL/articles
+crawlingnews/NULL/txt
+
+export/
+mentions/
+merge/
+!*.media.merge.csv
+
+helper/SQLite.log
+helper/SQLiteTest.db
+
+
+
 

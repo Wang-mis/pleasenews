@@ -6,6 +6,7 @@
 import random
 import string
 import time
+import json
 
 from datetime import datetime, timedelta
 
@@ -220,7 +221,7 @@ def generate_random_string(length=10):
     return random_string
 
 
-def currTime():
+def curr_time():
     t = time.time()
     return str(int(round(t * 1000000)))  # 微秒级时间戳
 
@@ -239,9 +240,20 @@ def create_date_range(inp: list):
     return result_list
 
 
-# TIME_RANGE = [20240127, 20240131]
-TIME_RANGE = [20240901, 20240905]
-PROCESS_GDELT_PATH = '../../merge/NULL/' + str(TIME_RANGE[0]) + '_' + str(TIME_RANGE[1]) + '.media.merge.csv'
+def dict_to_json(outfile, data):
+    with open(outfile, 'w') as f:
+        json.dump(data, f)
+
+
+def json_to_dict(file):
+    with open(file, 'r') as f:
+        ans = json.load(f)
+    return ans
+
+
+TIME_RANGE = [20240813, 20240911]
+DAYS = create_date_range(TIME_RANGE)
+PROCESS_GDELT_PATH = 'merge/NULL/' + str(TIME_RANGE[0]) + '_' + str(TIME_RANGE[1]) + '.media.merge.csv'
 
 if __name__ == "__main__":
     # 测试生成一个长度为10的随机字符串

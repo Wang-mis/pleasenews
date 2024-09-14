@@ -19,11 +19,13 @@ crawlingnews/NULL/txt
 
 export/
 mentions/
-merge/
+merge/*/*.csv
 !merge/NULL/*.media.merge.csv
 
 helper/SQLite.log
 helper/SQLiteTest.db
+
+pnews/
 
 
 

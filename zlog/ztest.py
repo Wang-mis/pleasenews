@@ -1,5 +1,7 @@
 import os
+
 import pandas as pd
+import spacy
 from keybert import KeyBERT
 from tqdm import tqdm
 from utils import create_date_range, TIME_RANGE
@@ -9,42 +11,51 @@ os.environ["HTTP_PROXY"] = 'http://127.0.0.1:7890'
 
 DAY = "20240901"
 SAVE_NEWS = "pnews/" + DAY + "/"
-MEIDA_CONTENT = SAVE_NEWS + "MentionSourceNames.csv"
-MEDIA_KEYWORD = SAVE_NEWS + "Keywords.csv"
-MEDIA_KEYWORD_CHECK = SAVE_NEWS + "Keywords_check.csv"
+CONTENT_PATH = SAVE_NEWS + "MentionSourceNames.csv"
+KEYWORD_PATH = SAVE_NEWS + "Keywords.csv"
+KEYWORD_CHECK_PATH = SAVE_NEWS + "Keywords_check.csv"
+
+lemmatize = False
+
+if lemmatize:
+    nlp = spacy.load('en_core_web_sm')
+else:
+    nlp = None
 
 
-def generate_keywords_by_KeyBERT():
-    df = pd.read_csv(MEIDA_CONTENT)
-    UniqueIDList = df["UniqueID"].to_list()
-    ContentList = df["Content"].to_list()
-    KeywordList = []
+def generate_keywords_by_keybert():
+    df = pd.read_csv(CONTENT_PATH)
+    unique_id_list = df["UniqueID"].to_list()
+    content_list = df["Content"].to_list()
+    keyword_list = []
 
     kw_model = KeyBERT()
 
-    process_bar = tqdm(total=len(UniqueIDList), desc=DAY + " 生成关键词中")
-    for index, content in enumerate(ContentList):
+    process_bar = tqdm(total=len(unique_id_list), desc=DAY + " 生成关键词中")
+    for content in content_list:
         try:
+            if lemmatize:
+                doc = nlp(content)
+                words = [t.lemma_ for t in doc]
+                content = " ".join(words)
+
             keywords = kw_model.extract_keywords(content, keyphrase_ngram_range=(1, 1), stop_words='english', top_n=15)
             keywords = "|".join([ele[0] for ele in keywords])
-            KeywordList.append(keywords)
+            keyword_list.append(keywords)
             process_bar.update(1)
         except Exception as e:
             print(e)
-            print(index)
             print(content)
-            KeywordList.append("error...")
+            keyword_list.append("error...")
 
     # 创建一个字典，包含列名和相应的数据
     data = {
-        'UniqueID': UniqueIDList,
-        'Keyword': KeywordList,
+        'UniqueID': unique_id_list,
+        'Keyword': keyword_list,
     }
 
-    # 使用字典创建数据框
-    df_key = pd.DataFrame(data)
-    df_key.to_csv(MEDIA_KEYWORD, index=False, encoding='utf-8', errors='ignore')
-    pass
+    # 生成csv
+    pd.DataFrame(data).to_csv(KEYWORD_PATH, index=False, encoding='utf-8', errors='ignore')
 
 
 def process_keywords():
@@ -52,22 +63,21 @@ def process_keywords():
         if x == "error..." or "'gbk' codec can't encode character" in x:
             return ""
 
-        key_list = [ele.strip() for ele in x.split("|")]
-        key_list1 = []
-        for ele in key_list:
-            key_list1 += [i.strip("\'\"") for i in ele.split(",")]
+        keywords = [ele.strip() for ele in x.split("|")]
+        keywords_processed = []
+        for ele in keywords:
+            keywords_processed += [i.strip("\'\"") for i in ele.split(",")]
 
-        ans = "|".join(key_list1)
-        return ans
+        keywords_str = "|".join(keywords_processed)
+        return keywords_str
 
-    df = pd.read_csv(MEDIA_KEYWORD).fillna("")
+    df = pd.read_csv(KEYWORD_PATH).fillna("")
     df['Keyword'] = df['Keyword'].apply(lambda x: parse_keywords(x))
-    df.to_csv(MEDIA_KEYWORD_CHECK, index=False)
-    return
+    df.to_csv(KEYWORD_CHECK_PATH, index=False)
 
 
 def get_keywords():
-    global DAY, SAVE_NEWS, MEIDA_CONTENT, MEDIA_KEYWORD, MEDIA_KEYWORD_CHECK
+    global DAY, SAVE_NEWS, CONTENT_PATH, KEYWORD_PATH, KEYWORD_CHECK_PATH
 
     days = create_date_range(TIME_RANGE)
     for day in days:
@@ -75,10 +85,10 @@ def get_keywords():
             continue
         DAY = str(day)
         SAVE_NEWS = "pnews/" + DAY + "/"
-        MEIDA_CONTENT = SAVE_NEWS + "MentionSourceNames.csv"
-        MEDIA_KEYWORD = SAVE_NEWS + "Keywords.csv"
-        MEDIA_KEYWORD_CHECK = SAVE_NEWS + "Keywords_check.csv"
-        generate_keywords_by_KeyBERT()
+        CONTENT_PATH = SAVE_NEWS + "MentionSourceNames.csv"
+        KEYWORD_PATH = SAVE_NEWS + "Keywords.csv"
+        KEYWORD_CHECK_PATH = SAVE_NEWS + "Keywords_check.csv"
+        generate_keywords_by_keybert()
         process_keywords()
 
 

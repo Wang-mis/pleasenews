@@ -19,8 +19,7 @@ crawlingnews/NULL/txt
 
 export/
 mentions/
-merge/*/*.csv
-!merge/NULL/*.media.merge.csv
+merge/
 
 helper/SQLite.log
 helper/SQLiteTest.db

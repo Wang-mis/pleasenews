@@ -4,16 +4,9 @@ import pandas as pd
 import spacy
 from keybert import KeyBERT
 from tqdm import tqdm
-from utils import create_date_range, TIME_RANGE
 
 os.environ['HTTPS_PROXY'] = 'http://127.0.0.1:7890'
 os.environ["HTTP_PROXY"] = 'http://127.0.0.1:7890'
-
-DAY = "20240901"
-SAVE_NEWS = "pnews/" + DAY + "/"
-CONTENT_PATH = SAVE_NEWS + "MentionSourceNames.csv"
-KEYWORD_PATH = SAVE_NEWS + "Keywords.csv"
-KEYWORD_CHECK_PATH = SAVE_NEWS + "Keywords_check.csv"
 
 lemmatize = False
 
@@ -23,15 +16,18 @@ else:
     nlp = None
 
 
-def generate_keywords_by_keybert():
-    df = pd.read_csv(CONTENT_PATH)
+def generate_keywords_by_keybert(day):
+    content_path = "pnews/" + day + "/MentionSourceNames.csv"
+    keyword_path = "pnews/" + day + "/Keywords.csv"
+
+    df = pd.read_csv(content_path, sep='\\')
     unique_id_list = df["UniqueID"].to_list()
     content_list = df["Content"].to_list()
     keyword_list = []
 
     kw_model = KeyBERT()
 
-    process_bar = tqdm(total=len(unique_id_list), desc=DAY + " 生成关键词中")
+    process_bar = tqdm(total=len(unique_id_list), desc=day + " 生成关键词中")
     for content in content_list:
         try:
             if lemmatize:
@@ -55,10 +51,13 @@ def generate_keywords_by_keybert():
     }
 
     # 生成csv
-    pd.DataFrame(data).to_csv(KEYWORD_PATH, index=False, encoding='utf-8', errors='ignore')
+    pd.DataFrame(data).to_csv(keyword_path, index=False, encoding='utf-8', errors='ignore')
 
 
-def process_keywords():
+def process_keywords(day):
+    keyword_path = "pnews/" + day + "/Keywords.csv"
+    keyword_check_path = "pnews/" + day + "/Keywords_check.csv"
+
     def parse_keywords(x):
         if x == "error..." or "'gbk' codec can't encode character" in x:
             return ""
@@ -71,26 +70,11 @@ def process_keywords():
         keywords_str = "|".join(keywords_processed)
         return keywords_str
 
-    df = pd.read_csv(KEYWORD_PATH).fillna("")
+    df = pd.read_csv(keyword_path).fillna("")
     df['Keyword'] = df['Keyword'].apply(lambda x: parse_keywords(x))
-    df.to_csv(KEYWORD_CHECK_PATH, index=False)
+    df.to_csv(keyword_check_path, index=False)
 
 
-def get_keywords():
-    global DAY, SAVE_NEWS, CONTENT_PATH, KEYWORD_PATH, KEYWORD_CHECK_PATH
-
-    days = create_date_range(TIME_RANGE)
-    for day in days:
-        if int(day) < 20240901:
-            continue
-        DAY = str(day)
-        SAVE_NEWS = "pnews/" + DAY + "/"
-        CONTENT_PATH = SAVE_NEWS + "MentionSourceNames.csv"
-        KEYWORD_PATH = SAVE_NEWS + "Keywords.csv"
-        KEYWORD_CHECK_PATH = SAVE_NEWS + "Keywords_check.csv"
-        generate_keywords_by_keybert()
-        process_keywords()
-
-
-if __name__ == "__main__":
-    get_keywords()
+def get_keywords(day):
+    generate_keywords_by_keybert(day)
+    process_keywords(day)

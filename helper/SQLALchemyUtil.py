@@ -1,22 +1,15 @@
+import pandas as pd
+from sqlalchemy import Column, Integer, String, Float, Text
 from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, String, DECIMAL, Float, Text
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
-import pandas as pd
 
-from utils import TIME_RANGE, create_date_range
-
-# engine = create_engine('sqlite:///:memory:', echo=True)
-engine = create_engine('sqlite:///SQLiteTest.db?check_same_thread=False', echo=True)
-
+engine = create_engine('sqlite:///helper/SQLiteTest.db?check_same_thread=False', echo=True)
 Base = declarative_base()
 
 
 class MergeItem(Base):
     __tablename__ = 'merge_table'
-
-    # 系统自带id 可自增
-    AutoId = Column(Integer, primary_key=True)
 
     GlobalEventID = Column(Integer)
     Day = Column(Integer)
@@ -107,10 +100,39 @@ class MergeItem(Base):
     Extras = Column(String)
 
     # 为了唯一标记一篇新闻文章
-    UniqueID = Column(String)
+    UniqueID = Column(String, primary_key=True)
 
 
-def gainMergeItem(row):
+# 新闻表
+class NewItem(Base):
+    __tablename__ = 'new_table'
+
+    # 系统自带id 可自增
+    # AutoId = Column(Integer, primary_key=True)
+
+    # 为了唯一标记一篇新闻文章
+    UniqueID = Column(String, primary_key=True)
+    Title = Column(String)
+    Author = Column(String)
+    PTime = Column(String)
+    DTime = Column(Integer)
+    MentionSourceName = Column(String)
+    MentionIdentifier = Column(String)
+    Content = Column(Text)
+
+
+# 关键词表
+class KeywordItem(Base):
+    __tablename__ = 'keyword_table'
+
+    # 系统自带id 可自增
+    # AutoId = Column(Integer, primary_key=True)
+    # 为了唯一标记一篇新闻文章
+    UniqueID = Column(String, primary_key=True)
+    Keyword = Column(Text)
+
+
+def gen_merge_item(row):
     return MergeItem(
         GlobalEventID=row[0],
         Day=row[1],
@@ -189,42 +211,7 @@ def gainMergeItem(row):
     )
 
 
-def writeMergeTable(file_path="../merge/NULL/20240110_20240120.merge.csv"):
-    """ 将CSV转换为表 """
-
-    Base.metadata.create_all(engine, checkfirst=True)
-    Session = sessionmaker(bind=engine)
-    session = Session()  # 实例化会话
-
-    data = pd.read_csv(file_path).fillna("")
-    merge_list = []
-    for index, row in data.iterrows():
-        merge_list.append(gainMergeItem(row.tolist()))
-
-    session.add_all(merge_list)
-    session.commit()  # 提交数据
-    session.close()
-
-
-# 新闻表
-class NewItem(Base):
-    __tablename__ = 'new_table'
-
-    # 系统自带id 可自增
-    AutoId = Column(Integer, primary_key=True)
-
-    # 为了唯一标记一篇新闻文章
-    UniqueID = Column(String)
-    Title = Column(String)
-    Author = Column(String)
-    PTime = Column(String)
-    DTime = Column(Integer)
-    MentionSourceName = Column(String)
-    MentionIdentifier = Column(String)
-    Content = Column(Text)
-
-
-def gainNewItem(row):
+def gen_new_item(row):
     return NewItem(
         UniqueID=row[0],
         Title=row[1],
@@ -237,88 +224,70 @@ def gainNewItem(row):
     )
 
 
-def writeNewTable(file_path="../pnews/20240120/MentionSourceNames.csv"):
-    Base.metadata.create_all(engine, checkfirst=True)
-    Session = sessionmaker(bind=engine)
-    session = Session()  # 实例化会话
-
-    data = pd.read_csv(file_path).fillna("")
-    merge_list = []
-    for index, row in data.iterrows():
-        merge_list.append(gainNewItem(row.tolist()))
-
-    session.add_all(merge_list)
-    session.commit()  # 提交数据
-    session.close()
-
-
-# 关键词表
-class KeywordItem(Base):
-    __tablename__ = 'keyword_table'
-
-    # 系统自带id 可自增
-    AutoId = Column(Integer, primary_key=True)
-    # 为了唯一标记一篇新闻文章
-    UniqueID = Column(String)
-    Keyword = Column(Text)
-
-
-def gainKeywordItem(row):
+def gen_keyword_item(row):
     return KeywordItem(
         UniqueID=row[0],
         Keyword=row[1]
     )
 
 
-def writeKeywordTable(file_path="../pnews/20240109/Keywords_check.csv"):
+def write_merge_table(file_path):
+    """ 将CSV转换为表 """
     Base.metadata.create_all(engine, checkfirst=True)
-    Session = sessionmaker(bind=engine)
-    session = Session()  # 实例化会话
+    session = sessionmaker(bind=engine)()
 
     data = pd.read_csv(file_path).fillna("")
+    data = data.drop_duplicates(subset=['UniqueID'], keep='first')
     merge_list = []
     for index, row in data.iterrows():
-        merge_list.append(gainKeywordItem(row.tolist()))
+        merge_list.append(gen_merge_item(row.tolist()))
 
-    session.add_all(merge_list)
+    # session.merge 如果主键重复，则覆盖对应的记录
+    # session.add / session.add_all 如果主键重复，则报错
+    for m in merge_list:
+        session.merge(m)
+
+    session.commit()
+    session.close()
+
+
+def write_new_table(file_path):
+    Base.metadata.create_all(engine, checkfirst=True)
+    session = sessionmaker(bind=engine)()
+    data = pd.read_csv(file_path, sep='\\').fillna("")
+    data = data.drop_duplicates(subset=['UniqueID'], keep='first')
+    merge_list = []
+    for index, row in data.iterrows():
+        merge_list.append(gen_new_item(row.tolist()))
+
+    for m in merge_list:
+        session.merge(m)
+
     session.commit()  # 提交数据
     session.close()
 
 
-def test():
-    # 写一条sql
-    sql = "SELECT COUNT(*) FROM keyword_table"  # merge_table"
-    # 建立dataframe
-    df = pd.read_sql_query(sql, engine)
-    print(df)
+def write_keyword_table(file_path):
+    Base.metadata.create_all(engine, checkfirst=True)
+    session = sessionmaker(bind=engine)()
+
+    data = pd.read_csv(file_path).fillna("")
+    data = data.drop_duplicates(subset=['UniqueID'], keep='first')
+    merge_list = []
+    for index, row in data.iterrows():
+        merge_list.append(gen_keyword_item(row.tolist()))
+
+    for m in merge_list:
+        session.merge(m)
+
+    session.commit()  # 提交数据
+    session.close()
 
 
-def exportData():
-    # 导出与特朗普相关的数据
-    sql = "SELECT * FROM new_table"
-    # 建立dataframe
-    df = pd.read_sql_query(sql, engine)
-    print(len(df))
-    # 内容包括特朗普
-    content_bool = df.Content.str.contains("Donald Trump", na=False)
-    df = df[content_bool]
-    print(len(df))
-    df = df.drop_duplicates(subset=["Content"], keep='first')
-    print(len(df))
-    df.to_csv("new_table.csv", index=False)
-
-
-def to_sql():
-    MEDIA_MERGE_PATH = "merge/NULL/" + str(TIME_RANGE[0]) + "_" + str(TIME_RANGE[1]) + ".media.merge.csv"
-    writeMergeTable(file_path=MEDIA_MERGE_PATH)
-
-    days = create_date_range(TIME_RANGE)
-    for day in days:
-        MENTION_PATH = "pnews/" + str(day) + "/MentionSourceNames.csv"
-        KEYWORDS_PATH = "pnews/" + str(day) + "/Keywords_check.csv"
-        writeNewTable(file_path=MENTION_PATH)
-        writeKeywordTable(file_path=KEYWORDS_PATH)
-
-
-if __name__ == '__main__':
-    to_sql()
+def to_sql(day):
+    media_merge_path = "merge/" + day + ".media.merge.csv"
+    mention_path = "pnews/" + day + "/MentionSourceNames.csv"
+    keywords_path = "pnews/" + day + "/Keywords_check.csv"
+    write_merge_table(file_path=media_merge_path)
+    write_new_table(file_path=mention_path)
+    write_keyword_table(file_path=keywords_path)

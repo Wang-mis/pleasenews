@@ -1,16 +1,6 @@
 import os
 import pandas as pd
 from tqdm import tqdm
-from utils import generate_random_string, create_date_range, TIME_RANGE
-
-DAY = "20240901"
-ARTICLES_PATH = "crawlingnews/NULL/articles/" + DAY + "/"
-SAVE_NEWS = "pnews/" + DAY + "/"
-
-
-def make_dirs():
-    if not os.path.exists(SAVE_NEWS):
-        os.makedirs(SAVE_NEWS)
 
 
 def read_article(article_path):
@@ -26,15 +16,16 @@ def read_article(article_path):
     return title, author, ptime, dtime, url, content
 
 
-def merge_articles():
-    medium_list = os.listdir(ARTICLES_PATH)
+def merge_articles(day):
+    articles_dir = "crawlingnews/NULL/articles/" + day + "/"
 
-    dfs_medium = []
+    medias = os.listdir(articles_dir)
 
-    for medium in medium_list:  # 遍历每一个媒体
-        articles = os.listdir(ARTICLES_PATH + medium + "/")
+    dfs_media = []
+    for media in medias:  # 遍历每一个媒体
+        articles = os.listdir(articles_dir + media + "/")
 
-        data_medium = {
+        data_media = {
             "UniqueID": [],
             "Title": [],
             "Author": [],
@@ -46,38 +37,25 @@ def merge_articles():
         }
 
         articles_count = len(articles)
-        process_bar = tqdm(total=articles_count, desc=DAY + f" 处理{medium}的文章中：")
+        process_bar = tqdm(total=articles_count, desc=day + f" 处理{media}的文章中：")
         for article in articles:
-            title, author, ptime, dtime, url, content = read_article(ARTICLES_PATH + medium + "/" + article)
+            title, author, ptime, dtime, url, content = read_article(articles_dir + media + "/" + article)
 
-            data_medium["UniqueID"].append(article.split(".")[0])  # txt文本文件的名称就是UniqueID
-            data_medium["Title"].append(title)
-            data_medium["Author"].append(author)
-            data_medium["PTime"].append(ptime)
-            data_medium["DTime"].append(dtime)
-            data_medium["MentionSourceName"].append(medium)
-            data_medium["MentionIdentifier"].append(url)
-            data_medium["Content"].append(content)
+            data_media["UniqueID"].append(article.split(".")[0])  # txt文本文件的名称就是UniqueID
+            data_media["Title"].append(title)
+            data_media["Author"].append(author)
+            data_media["PTime"].append(ptime)
+            data_media["DTime"].append(dtime)
+            data_media["MentionSourceName"].append(media)
+            data_media["MentionIdentifier"].append(url)
+            data_media["Content"].append(content)
 
             process_bar.update(1)
 
-        dfs_medium.append(pd.DataFrame(data_medium))
+        dfs_media.append(pd.DataFrame(data_media))
 
-    # 合并所有的merge.csv
-    pd.concat(dfs_medium).to_csv(SAVE_NEWS + "MentionSourceNames.csv", index=False)
-
-
-def process_articles():
-    global DAY, ARTICLES_PATH, SAVE_NEWS
-
-    days = create_date_range(TIME_RANGE)
-    for day in days:
-        DAY = str(day)
-        ARTICLES_PATH = "crawlingnews/NULL/articles/" + DAY + "/"
-        SAVE_NEWS = "pnews/" + DAY + "/"
-        make_dirs()
-        merge_articles()
-
-
-if __name__ == "__main__":
-    process_articles()
+    # 合并爬取到的当天的所有新闻
+    merge_articles_dir = "pnews/" + day + "/"
+    if not os.path.exists(merge_articles_dir):
+        os.makedirs(merge_articles_dir)
+    pd.concat(dfs_media).to_csv(merge_articles_dir + "MentionSourceNames.csv", index=False, sep='\\')

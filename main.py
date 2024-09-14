@@ -8,7 +8,7 @@ from zlog.ztest import get_keywords
 if __name__ == '__main__':
     # download_csv()
     # process_csv()
-    crawl_days()
+    # crawl_days()
     process_articles()
-    get_keywords()
-    to_sql()
+    # get_keywords()
+    # to_sql()

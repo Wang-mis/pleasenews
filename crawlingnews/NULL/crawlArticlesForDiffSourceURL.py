@@ -2,15 +2,14 @@
 爬取不同域名下相关URL的新闻文章
 """
 import os
-import random
 import re
-
-from bs4 import BeautifulSoup
 
 import pandas as pd
 import requests
+from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
-from utils import TIME_RANGE, PROCESS_GDELT_PATH, create_date_range, json_to_dict, DAYS
+
+from utils import TIME_RANGE, PROCESS_GDELT_PATH, json_to_dict, DAYS
 
 PROXIES = {
     'http': 'http://127.0.0.1:7890',
@@ -185,6 +184,7 @@ def craw_articles(domain_urls, domain, div_article, div_attrs, use_sub, h_in,
                 article.append('_\n')
                 print("获取新闻作者失败。")
 
+
             # 获取发布时间
             if release_date_tag:
                 release_date = release_date_tag.text.strip().replace('\n', ' ').replace('\r', ' ')
@@ -237,7 +237,7 @@ def craw():
         "dailymail.co.uk",  # 1254 ##
         "foxnews.com",  # 343 ##
         "globalsecurity.org",  # 409 ##
-        "indiatimes.com",  # 2586 ##
+        # "indiatimes.com",  # 2586 ##
         # "indiablooms.com",  # 86 --
         # "indianexpress.com",  # 747 !!
         "jpost.com",  # 307 ##

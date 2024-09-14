@@ -13,6 +13,7 @@ MEIDA_CONTENT = SAVE_NEWS + "MentionSourceNames.csv"
 MEDIA_KEYWORD = SAVE_NEWS + "Keywords.csv"
 MEDIA_KEYWORD_CHECK = SAVE_NEWS + "Keywords_check.csv"
 
+
 def generate_keywords_by_KeyBERT():
     df = pd.read_csv(MEIDA_CONTENT)
     UniqueIDList = df["UniqueID"].to_list()
@@ -70,6 +71,8 @@ def get_keywords():
 
     days = create_date_range(TIME_RANGE)
     for day in days:
+        if int(day) < 20240901:
+            continue
         DAY = str(day)
         SAVE_NEWS = "pnews/" + DAY + "/"
         MEIDA_CONTENT = SAVE_NEWS + "MentionSourceNames.csv"

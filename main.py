@@ -11,17 +11,22 @@ from zlog.ztest import get_keywords
 
 def run(day):
     t1 = time.time()
-    download_csv(day)
+    res_export, _ = download_csv(day)
+
+    if not res_export:
+        print(f"下载{day}.export.CSV文件失败，跳过后续步骤！")
+        return
+
     process_csv(day)
     craw(day)
     merge_articles(day)
-    get_keywords(day)
-    to_sql(day)
+    # get_keywords(day)
+    # to_sql(day)
     t2 = time.time()
     print(f"爬取 {day} 新闻耗时：{(t2 - t1) / 3600} h。")
 
 
 if __name__ == '__main__':
-    days = create_date_range(['20240813', '20240913'])
+    days = create_date_range(['20240911', '20240913'])
     for day in days:
         run(day)

@@ -16,12 +16,12 @@ def run(day):
     craw(day)
     merge_articles(day)
     get_keywords(day)
-    to_sql(day)
+    # to_sql(day)
     t2 = time.time()
     print(f"爬取 {day} 新闻耗时：{(t2 - t1) / 3600} h。")
 
 
 if __name__ == '__main__':
-    days = create_date_range(['20240813', '20240913'])
+    days = create_date_range(['20240823', '20240901'])
     for day in days:
         run(day)

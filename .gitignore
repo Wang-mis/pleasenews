@@ -14,8 +14,10 @@ db.sqlite3-journal
 
 .idea
 
-crawlingnews/NULL/articles
-crawlingnews/NULL/txt
+data/
+
+crawlingnews/NULL/articles/
+crawlingnews/NULL/txt/
 
 export/
 mentions/

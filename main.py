@@ -11,7 +11,12 @@ from zlog.ztest import get_keywords
 
 def run(day):
     t1 = time.time()
-    download_csv(day)
+    res_export, _ = download_csv(day)
+
+    if not res_export:
+        print(f"下载{day}.export.CSV文件失败，跳过后续步骤！")
+        return
+
     process_csv(day)
     craw(day)
     merge_articles(day)

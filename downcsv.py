@@ -12,8 +12,6 @@ from requests.adapters import HTTPAdapter
 from utils import export_head, mentions_head, create_date_range, TIME_RANGE
 import warnings
 
-warnings.filterwarnings("ignore")
-
 os.environ['HTTPS_PROXY'] = 'http://127.0.0.1:7890'
 os.environ["HTTP_PROXY"] = 'http://127.0.0.1:7890'
 
@@ -117,7 +115,7 @@ mention_times = [
 ]
 
 
-def download_day(daytime, filedir, download):
+def download_day(daytime, filedir, download) -> bool:
     """
     下载某一天的CSV数据，并且为其添加Header。
     如果download="export"，下载GDELT1.0中的exports文件；
@@ -155,7 +153,7 @@ def download_day(daytime, filedir, download):
 
         if test_request.status_code != 200:
             print(f"下载文件URL={url}失败！")
-            return
+            return False
 
         # 保存zip文件
         with open(filedir + "data.zip", "wb") as data:
@@ -193,46 +191,71 @@ def download_day(daytime, filedir, download):
             writer = csv.writer(f)
             writer.writerows(datas)  # 写入数据
 
+        return True
+
     except Exception as e:
         print(f"下载文件失败！\n", e)
+        return False
 
 
-def download_export(day, filedir='./export/'):
-    download_day(daytime=day, filedir=filedir, download="export")
+def download_export(day, filedir) -> bool:
+    return download_day(daytime=day, filedir=filedir, download="export")
 
 
-def download_mentions(day, filedir='./mentions/'):
+def download_mentions(day, filedir) -> list[bool]:
+    res = []
     for mention_time in mention_times:
-        download_day(daytime=day + mention_time, filedir=filedir, download="mentions")
+        res.append(download_day(daytime=day + mention_time, filedir=filedir, download="mentions"))
+
+    return res
 
 
-def check_mentions(day, filedir="./mentions/"):
-    # mentions 表下载 复检 （下载时有些会忽略）
-    mfiledir = filedir + day + "/"
-    mentions_csv = os.listdir(mfiledir)
+def check_download(day, export_dir, mention_dir) -> tuple[bool, list[[bool]]]:
+    res_export = False
+    res_mentions = []
+    # 重新下载export
+    export_path = export_dir + day + ".export.CSV"
+    max_try_count = 3
+    for i in range(max_try_count):
+        if not os.path.exists(export_path):
+            print(f"第{i}/{max_try_count}次尝试重新下载{day}.export.CSV文件")
+            download_day(daytime=day, filedir=export_dir, download="export")
+        else:
+            break
 
-    # GEDLT2.0中，每15分钟记录一次mentions文件，每天记录96个mentions文件
-    # 如果len(mentions_csv) != 96，说明当天的文件未全部下载
-    if len(mentions_csv) != 96:
-        haved = [ele.split(".")[0][-6:] for ele in mentions_csv]  # 获取mentions文件对应的时间段
-        print(f"DAY = {day}, 有{(96 - len(haved))}个文件未成功下载。")
-        for time in mention_times:
-            if time not in haved:  # 如果某一时间段不存在mentions文件，则下载
-                print(f"重新下载{day + time}")
-                download_day(daytime=day + time, filedir=filedir, download="mentions")
+    if not os.path.exists(export_path):
+        print(f"下载{day}.export.CSV文件失败！")
+    else:
+        res_export = True
+
+    # 重新下载mentions
+    mention_day_dir = mention_dir + day + "/"
+    for i in range(max_try_count):
+        mentions = os.listdir(mention_day_dir)
+
+        # GEDLT2.0中，每15分钟记录一次mentions文件，每天记录96个mentions文件
+        # 如果len(mentions_csv) != 96，说明当天的文件未全部下载
+        if len(mentions) != 96:
+            mention_day_times = [ele.split(".")[0][-6:] for ele in mentions]  # 获取mentions文件对应的时间段
+            print(f"第{i}/{max_try_count}次尝试重新下载{day}*.mentions.CSV文件")
+            for time in mention_times:
+                res_mentions = []
+                if time not in mention_day_times:  # 如果某一时间段不存在mentions文件，则下载
+                    print(f"\t重新下载{day + time}")
+                    download_day(daytime=day + time, filedir=mention_dir, download="mentions")
+                    res_mentions.append(os.path.exists(mention_dir + day + time + ".mentions.CSV"))
+        else:
+            break
+
+    mentions = os.listdir(mention_day_dir)
+    if len(mentions) != 96:
+        print(f"仍有{96 - len(mentions)}个文件下载失败。")
+
+    return res_export, res_mentions
 
 
-def download_csv(time_range: Union[str, list[str]]):
+def download_csv(day) -> tuple[bool, list[[bool]]]:
     # 下载一天的数据
-    if isinstance(time_range, str):
-        day = time_range
-        download_export(day, filedir='./export/')
-        download_mentions(day, filedir='./mentions/')
-        check_mentions(day, filedir='./mentions/')
-        return
-
-    # 下载一个时间段的数据
-    for day in create_date_range(time_range):
-        download_export(day, filedir='./export/')
-        download_mentions(day, filedir='./mentions/')
-        check_mentions(day, filedir='./mentions/')
+    download_export(day, filedir='export/')
+    download_mentions(day, filedir='mentions/')
+    return check_download(day, export_dir='export/', mention_dir='mentions/')

@@ -82,8 +82,20 @@ def get_error_url_domain(day, domain) -> set[str]:
     return tmp_domain_urls_set
 
 
-def craw_articles(day, domain_urls, domain, div_article, div_attrs, use_sub, h_in,
-                  h_x, h_attrs, a_x, a_attrs, t_x, t_attrs, find_p, p_attrs):  # use_sub是否创建子文件夹
+def craw_articles(day, domain_urls, domain, use_sub, configs):  # use_sub是否创建子文件夹
+
+    div_article = configs['div_article']
+    div_attrs = configs['div_attrs']
+    h_in = configs['h_in']
+    h_x = configs['h_x']
+    h_attrs = configs['h_attrs']
+    a_x = configs['a_x']
+    a_attrs = configs['a_attrs']
+    t_x = configs['t_x']
+    t_attrs = configs['t_attrs']
+    find_p = configs['find_p']
+    p_attrs = configs['p_attrs']
+
     article_dir = "crawlingnews/NULL/articles/" + day + "/"
     txt_dir = "crawlingnews/NULL/txt/" + day + "/"
 
@@ -91,12 +103,13 @@ def craw_articles(day, domain_urls, domain, div_article, div_attrs, use_sub, h_i
     max_count_domain = 500
     len_domain = len(domain_urls)
     for i, url_data in enumerate(domain_urls):
+        url, day, unique_id = url_data.split('+')
+
         try:
             # 限制每个域名每天新闻数量，避免爬取时间过长
             if i > max_count_domain:
                 break
 
-            url, day, unique_id = url_data.split('+')
             print(f"{domain}下的第{i}/{len_domain}篇新闻")
             print("新闻URL：", url)
             print("事件发生日期：", day)
@@ -120,12 +133,12 @@ def craw_articles(day, domain_urls, domain, div_article, div_attrs, use_sub, h_i
             sess.mount('https://', HTTPAdapter(max_retries=10))
             sess.keep_alive = False
 
-            req = requests.get(url, proxies=PROXIES, headers=HEADERS, timeout=30)
+            req = requests.get(url, proxies=PROXIES, headers=HEADERS, timeout=5, verify=False)
             req.close()
 
             # 保存出错的URL
             if req.status_code != 200:
-                print(f"爬取文章出错！URL={url}, State Code={req.status_code}")
+                print(f"爬取新闻出错！URL={url}, State Code={req.status_code}")
                 error_urls.append(url + '\n')
                 continue
 
@@ -195,7 +208,8 @@ def craw_articles(day, domain_urls, domain, div_article, div_attrs, use_sub, h_i
                 f.writelines(article)
                 f.close()
         except Exception as e:
-            print("爬取新闻失败！\n", e)
+            print("爬取新闻出错！URL={url} \n", e)
+            error_urls.append(url + '\n')
             continue
 
     # 保存出错的URL
@@ -204,7 +218,7 @@ def craw_articles(day, domain_urls, domain, div_article, div_attrs, use_sub, h_i
     f.close()
 
 
-def craw(day):
+def craw_day(day):
     txt_dir = "crawlingnews/NULL/txt/" + day + "/"
     article_dir = "crawlingnews/NULL/articles/" + day + "/"
 
@@ -239,40 +253,27 @@ def craw(day):
     ]
 
     for domain in domains:
-        # 获取爬虫参数
+        # region 处理爬虫参数
         configs = json_to_dict("crawlingnews/" + domain + ".config.json")
-        div_article = configs["div_article"]
-        div_attrs = configs["div_attrs"]
-        if 'class' in div_attrs.keys():
-            div_attrs['class'] = div_attrs['class'].split(' ')
-        h_in = True if configs["h_in"] == "True" else False
-        h_x = configs["h_x"]
-        h_attrs = configs["h_attrs"]
-        if 'class' in h_attrs.keys():
-            h_attrs['class'] = h_attrs['class'].split(' ')
-        a_x = configs["a_x"]
-        a_attrs = configs["a_attrs"]
-        if 'class' in a_attrs.keys():
-            a_attrs['class'] = a_attrs['class'].split(' ')
-        t_x = configs["t_x"]
-        t_attrs = configs["t_attrs"]
-        if 'class' in t_attrs.keys():
-            t_attrs['class'] = t_attrs['class'].split(' ')
-        find_p = configs["find_p"]
-        p_attrs = configs["p_attrs"]
-        if 'class' in p_attrs.keys():
-            p_attrs['class'] = p_attrs['class'].split(' ')
+        if 'class' in configs["div_attrs"].keys():
+            configs["div_attrs"]['class'] = configs["div_attrs"]['class'].split(' ')
+        configs["h_in"] = True if configs["h_in"] == "True" else False
+        if 'class' in configs["h_attrs"].keys():
+            configs["h_attrs"]['class'] = configs["h_attrs"]['class'].split(' ')
+        if 'class' in configs["a_attrs"].keys():
+            configs["a_attrs"]['class'] = configs["a_attrs"]['class'].split(' ')
+        if 'class' in configs["t_attrs"].keys():
+            configs["t_attrs"]['class'] = configs["t_attrs"]['class'].split(' ')
+        if 'class' in configs["p_attrs"].keys():
+            configs["p_attrs"]['class'] = configs["p_attrs"]['class'].split(' ')
+        # endregion
 
         # 第一次爬取 没有出现error_url_tmp_domain.txt
         error_url_txt = txt_dir + "error_url_" + domain + ".txt"
         if not os.path.exists(error_url_txt):
             domain_urls = get_url_domain(day, domain)
-            craw_articles(day, domain_urls, domain, div_article=div_article, div_attrs=div_attrs, use_sub=False,
-                          h_x=h_x, h_in=h_in, h_attrs=h_attrs, a_x=a_x, a_attrs=a_attrs, t_x=t_x, t_attrs=t_attrs,
-                          find_p=find_p, p_attrs=p_attrs)
+            craw_articles(day, domain_urls, domain, False, configs)
         else:
             # 再次获取出错的链接文章
             domain_urls = get_error_url_domain(day, domain)
-            craw_articles(day, domain_urls, domain, div_article=div_article, div_attrs=div_attrs, use_sub=False,
-                          h_x=h_x, h_in=h_in, h_attrs=h_attrs, a_x=a_x, a_attrs=a_attrs, t_x=t_x, t_attrs=t_attrs,
-                          find_p=find_p, p_attrs=p_attrs)
+            craw_articles(day, domain_urls, domain, False, configs)

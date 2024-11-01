@@ -1,5 +1,5 @@
+import re
 from bs4 import BeautifulSoup
-
 from crawlingnews.sources.SourceParser import SourceParser
 
 
@@ -44,18 +44,23 @@ class YorkpressParser(SourceParser):
         # 将日期处理成YYYYMMDD的格式
         return datetime.split(' ')[0].replace('-', '')
 
+    @staticmethod
+    def process_paragraph(p: str) -> str:
+        p = p.strip().replace('&nbsp;', ' ').replace('\xa0', ' ')
+        return re.sub(r'\s+', ' ', p).strip()
+
     def get_paragraphs(self, soup: BeautifulSoup) -> list[str]:
         paragraphs = []
         first = soup.select('p.article-first-paragraph')
         if len(first) == 1:
-            paragraphs.append(first[0].text.strip())
+            paragraphs.append(self.process_paragraph(first[0].text))
 
         others = soup.select('#subscription-content p')
         for other in others:
+            # 如果p标签内还有其他标签，直接跳过
             if other.find():
                 continue
 
-            # p = other.text.strip().replace('&nbsp;')
-            paragraphs.append(other.text.strip())
+            paragraphs.append(self.process_paragraph(other.text))
 
         return paragraphs

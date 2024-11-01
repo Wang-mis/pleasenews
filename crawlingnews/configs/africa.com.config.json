@@ -1,19 +1,19 @@
 {
-    "div_article": "div",
+    "div_article": "article",
     "div_attrs": {
-        "class": "dcr-1b457fa"
     },
     "h_in": "False",
     "h_x": "h1",
     "h_attrs":{
+        "class": "entry-title"
     },
-    "a_x": "a",
+    "a_x": "span",
     "a_attrs":{
-        "rel": "author"
+        "class" : "ast-terms-link"
     },
-    "t_x": "time",
+    "t_x": "span",
     "t_attrs":{
-        "class": "djshfjsdhfj"
+        "class" : "published"
     },
     "find_p": "p",
     "p_attrs":{

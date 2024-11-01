@@ -1,0 +1,17 @@
+{
+    "div_article": "section",
+    "div_attrs": {
+        "name": "articleBody"
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs": {},
+    "a_x": "div",
+    "a_attrs": {
+        "class": "css-233int epjyd6m0"
+    },
+    "t_x": "time",
+    "t_attrs": {},
+    "find_p": "p",
+    "p_attrs": {}
+}

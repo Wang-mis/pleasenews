@@ -1,20 +1,18 @@
 {
     "div_article": "article",
     "div_attrs": {
-        "class" : "caas-container"
     },
-    "h_in": "True",
+    "h_in": "False",
     "h_x": "h1",
     "h_attrs":{
-
     },
-    "a_x": "div",
+    "a_x": "a",
     "a_attrs":{
-        "class" : "caas-attr-item-author"
+        "rel": "author"
     },
     "t_x": "time",
     "t_attrs":{
-        "class" : "caas-attr-meta-time"
+        "class": "djshfjsdhfj"
     },
     "find_p": "p",
     "p_attrs":{

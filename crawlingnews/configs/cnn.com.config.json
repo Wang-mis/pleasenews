@@ -1,0 +1,22 @@
+{
+    "div_article": "article",
+    "div_attrs": {
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+        "data-editable":"headlineText"
+    },
+    "a_x": "div",
+    "a_attrs":{
+        "class" : "byline__names"
+    },
+    "t_x": "div",
+    "t_attrs":{
+        "class" : "headline__byline-sub-text"
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

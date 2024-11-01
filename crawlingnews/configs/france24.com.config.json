@@ -1,15 +1,15 @@
 {
-    "div_article": "section",
+    "div_article": "article",
     "div_attrs": {
-        "name": "articleBody"
     },
     "h_in": "False",
     "h_x": "h1",
     "h_attrs":{
+        "class": "t-content__title a-page-title"
     },
-    "a_x": "div",
+    "a_x": "span",
     "a_attrs":{
-        "class": "css-233int epjyd6m0"
+        "class" : "m-from-author__by-label"
     },
     "t_x": "time",
     "t_attrs":{

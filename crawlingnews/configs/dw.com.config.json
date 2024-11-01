@@ -1,20 +1,18 @@
 {
-    "div_article": "main",
+    "div_article": "article",
     "div_attrs": {
-        "class" : "article__main"
     },
     "h_in": "False",
     "h_x": "h1",
     "h_attrs":{
-        "class": "headline__text"
+
     },
     "a_x": "div",
     "a_attrs":{
-        "class" : "byline__names"
+        "class": "author-details"
     },
-    "t_x": "div",
+    "t_x": "time",
     "t_attrs":{
-        "class" : "headline__byline-sub-text"
     },
     "find_p": "p",
     "p_attrs":{

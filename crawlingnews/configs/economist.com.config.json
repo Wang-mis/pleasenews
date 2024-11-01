@@ -1,0 +1,21 @@
+{
+    "div_article": "article",
+    "div_attrs": {
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+        "class": "css-1p83fk8 e1r8fcie0"
+    },
+    "a_x": "span",
+    "a_attrs":{
+        "class": "author"
+    },
+    "t_x": "time",
+    "t_attrs":{
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

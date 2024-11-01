@@ -1,0 +1,22 @@
+{
+    "div_article": "article",
+    "div_attrs": {
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+        "class": "article__headline"
+    },
+    "a_x": "a",
+    "a_attrs":{
+        "class": "author url fn article__author-link t-p-color"
+    },
+    "t_x": "span",
+    "t_attrs":{
+        "class": "article__timestamp"
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

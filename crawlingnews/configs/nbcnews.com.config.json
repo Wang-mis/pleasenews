@@ -1,0 +1,22 @@
+{
+    "div_article": "article",
+    "div_attrs": {
+    },
+    "h_in": "False",
+    "h_x": "h1",
+    "h_attrs":{
+        "class": "article-hero-headline__htag lh-none-print black-print"
+    },
+    "a_x": "span",
+    "a_attrs":{
+        "class" : "byline-name"
+    },
+    "t_x": "time",
+    "t_attrs":{
+        "class" : "relative z-1"
+    },
+    "find_p": "p",
+    "p_attrs":{
+
+    }
+}

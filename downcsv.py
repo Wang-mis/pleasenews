@@ -131,8 +131,10 @@ def download_day(daytime, filedir, download) -> bool:
 
     try:
         headers = {
-            'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                          "Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.33"
+            # 'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+            #               "Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.33"
+            'User-Agent': "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) "
+                          "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Mobile Safari/537.36 Edg/129.0.0.0"
         }
         sess = requests.Session()
         sess.mount('http://', HTTPAdapter(max_retries=3))
@@ -178,19 +180,30 @@ def download_day(daytime, filedir, download) -> bool:
             file_path = filedir + daytime + '.export.CSV'
             head = export_head
 
-        datas = []
-        with open(file_path, "r") as f:
-            reader = csv.reader(f)
-            reader = list(reader)
+        tmp_file_path = file_path + ".tmp"
+        f1, f2 = None, None
+        try:
+            f1, f2 = open(file_path, "r"), open(tmp_file_path, 'w', newline='')
+            reader = csv.reader(f1)
+            # 为tmp文件添加head
+            writer = csv.writer(f2, delimiter='\t')
+            writer.writerow(head)
+            # 将原csv文件的数据复制到tmp文件中
+            writer = csv.writer(f2)
             for line in reader:
-                datas.append(line)
+                writer.writerow(line)
+        except IOError as e:
+            print("文件操作出错！")
+            return False
+        finally:
+            if 'f1' in locals():
+                f1.close()
+            if 'f2' in locals():
+                f2.close()
 
-        with open(file_path, 'w', newline='') as f:
-            writer = csv.writer(f, delimiter='\t')
-            writer.writerow(head)  # 写入header
-            writer = csv.writer(f)
-            writer.writerows(datas)  # 写入数据
-
+        # 删除原文件，将tmp文件更名
+        os.remove(file_path)
+        os.rename(tmp_file_path, file_path)
         return True
 
     except Exception as e:
@@ -254,7 +267,7 @@ def check_download(day, export_dir, mention_dir) -> tuple[bool, list[[bool]]]:
     return res_export, res_mentions
 
 
-def download_csv(day) -> tuple[bool, list[[bool]]]:
+def download_csv(day) -> tuple[bool, list[bool]]:
     # 下载一天的数据
     download_export(day, filedir='export/')
     download_mentions(day, filedir='mentions/')

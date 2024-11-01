@@ -25,19 +25,21 @@ def merge_mentions(day, mention_path, export_path, merge_path):
     if not os.path.exists(merge_path):
         os.makedirs(merge_path)
 
+    # 遍历mentions/DAY/目录下的所有mentions文件，合并一天中的所有mentions.CSV
     mention_day_path = mention_path + day + "/"
-    mention_day_dfs = []
-    # 遍历mentions/DAY/目录下的所有mentions文件
+    mention_day_merged_df = None
     for mention_file in os.listdir(mention_day_path):
         # 如果当前文件不是CSV文件，直接跳过
         if mention_file.split(".")[-1].lower() != 'csv':
             continue
 
         # 读取mentions.CSV
-        mention_day_dfs.append(pd.read_csv(mention_day_path + mention_file, delimiter='\t'))
+        now_mention_df = pd.read_csv(mention_day_path + mention_file, delimiter='\t')
+        if mention_day_merged_df is None:
+            mention_day_merged_df = now_mention_df
+        else:
+            mention_day_merged_df = pd.concat([mention_day_merged_df, now_mention_df])
 
-    # 合并一天中的所有mentions.CSV
-    mention_day_merged_df = pd.concat(mention_day_dfs)
     # 读取export.CSV
     export_day_df = pd.read_csv(export_path + day + ".export.CSV", delimiter='\t')
     # 合并mentions.CSV和export.CSV
@@ -47,13 +49,15 @@ def merge_mentions(day, mention_path, export_path, merge_path):
     data_day_df.to_csv(merge_path + day + ".merge.csv", index=False)
 
 
-def merge_medialist(day, merge_path):
+def merge_medialist(day, merge_path, my_domains=None):
     merge_file = day + ".merge.csv"
     df = pd.read_csv(merge_path + merge_file)
-    df = df[df["MentionSourceName"].isin(MEDIUMLIST)]
+    domains = my_domains if my_domains is not None else MEDIUMLIST
+    df = df[df["MentionSourceName"].isin(domains)]
     df.to_csv(merge_path + day + ".media.merge.csv", index=False)
 
 
-def process_csv(day):
+
+def process_csv(day, domains=None):
     merge_mentions(day, mention_path="mentions/", export_path="export/", merge_path="merge/")
-    merge_medialist(day, merge_path="merge/")
+    merge_medialist(day, merge_path="merge/", my_domains=domains)

@@ -127,7 +127,7 @@ def curr_time():
     return str(int(round(t * 1000000)))  # 微秒级时间戳
 
 
-def create_date_range(inp: list):
+def create_date_range(inp: list[str | int]):
     result_list = []
     sta_day = datetime.strptime(str(inp[0]), '%Y%m%d')
     end_day = datetime.strptime(str(inp[1]), '%Y%m%d')

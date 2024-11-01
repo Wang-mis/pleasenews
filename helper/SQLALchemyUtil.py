@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-engine = create_engine('sqlite:///helper/SQLiteTest.db?check_same_thread=False', echo=True)
+engine = create_engine('sqlite:///helper/SQLiteTest.db?check_same_thread=False', echo=False)
 Base = declarative_base()
 
 
@@ -231,19 +231,15 @@ def gen_keyword_item(row):
     )
 
 
-def write_merge_table(file_path):
-    """ 将CSV转换为表 """
+def write_to_table(file_path, gen_func):
     Base.metadata.create_all(engine, checkfirst=True)
     session = sessionmaker(bind=engine)()
-
-    data = pd.read_csv(file_path).fillna("")
+    data = pd.read_csv(file_path, sep='\\').fillna("")
     data = data.drop_duplicates(subset=['UniqueID'], keep='first')
     merge_list = []
     for index, row in data.iterrows():
-        merge_list.append(gen_merge_item(row.tolist()))
+        merge_list.append(gen_func(row.tolist()))
 
-    # session.merge 如果主键重复，则覆盖对应的记录
-    # session.add / session.add_all 如果主键重复，则报错
     for m in merge_list:
         session.merge(m)
 
@@ -251,43 +247,57 @@ def write_merge_table(file_path):
     session.close()
 
 
-def write_new_table(file_path):
-    Base.metadata.create_all(engine, checkfirst=True)
+def delete_from_table(table, unique_ids: list):
     session = sessionmaker(bind=engine)()
-    data = pd.read_csv(file_path, sep='\\').fillna("")
-    data = data.drop_duplicates(subset=['UniqueID'], keep='first')
-    merge_list = []
-    for index, row in data.iterrows():
-        merge_list.append(gen_new_item(row.tolist()))
+    items_to_delete = session.query(table).filter(table.uniqueID.in_(unique_ids)).all()
+    for item in items_to_delete:
+        session.delete(item)
 
-    for m in merge_list:
-        session.merge(m)
-
-    session.commit()  # 提交数据
+    session.commit()
     session.close()
 
 
-def write_keyword_table(file_path):
+def write_to_table_by_csv(csv, gen_func):
     Base.metadata.create_all(engine, checkfirst=True)
     session = sessionmaker(bind=engine)()
-
-    data = pd.read_csv(file_path).fillna("")
-    data = data.drop_duplicates(subset=['UniqueID'], keep='first')
-    merge_list = []
-    for index, row in data.iterrows():
-        merge_list.append(gen_keyword_item(row.tolist()))
-
-    for m in merge_list:
-        session.merge(m)
-
-    session.commit()  # 提交数据
+    for index, row in csv.iterrows():
+        session.merge(gen_func(row.tolist()))
+    session.commit()
     session.close()
+
+
+def write_to_table_by_file(file_path, gen_func, sep):
+    data = pd.read_csv(file_path, sep=sep).fillna("")
+    data = data.drop_duplicates(subset=['UniqueID'], keep='first')
+    write_to_table_by_csv(data, gen_func)
+
+
+def delete_from_table_by_id(table, unique_ids: list):
+    session = sessionmaker(bind=engine)()
+    items_to_delete = session.query(table).filter(table.uniqueID.in_(unique_ids)).all()
+    for item in items_to_delete:
+        session.delete(item)
+
+    session.commit()
+    session.close()
+
+
+def write_merge_table_by_file(file_path):
+    write_to_table_by_file(file_path, gen_merge_item, sep=',')
+
+
+def write_new_table_by_file(file_path):
+    write_to_table_by_file(file_path, gen_new_item, sep='\\')
+
+
+def write_keyword_table_by_file(file_path):
+    write_to_table_by_file(file_path, gen_keyword_item, sep=',')
 
 
 def to_sql(day):
     media_merge_path = "merge/" + day + ".media.merge.csv"
     mention_path = "pnews/" + day + "/MentionSourceNames.csv"
     keywords_path = "pnews/" + day + "/Keywords_check.csv"
-    write_merge_table(file_path=media_merge_path)
-    write_new_table(file_path=mention_path)
-    write_keyword_table(file_path=keywords_path)
+    write_merge_table_by_file(file_path=media_merge_path)
+    write_new_table_by_file(file_path=mention_path)
+    write_keyword_table_by_file(file_path=keywords_path)

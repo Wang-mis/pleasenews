@@ -58,4 +58,10 @@ def merge_articles(day):
     merge_articles_dir = "pnews/" + day + "/"
     if not os.path.exists(merge_articles_dir):
         os.makedirs(merge_articles_dir)
-    pd.concat(dfs_media).to_csv(merge_articles_dir + "MentionSourceNames.csv", index=False, sep='\\')
+
+    if len(dfs_media) == 0:
+        columns = ["UniqueID", "Title", "Author", "PTime", "DTime", "MentionSourceName", "MentionIdentifier", "Content"]
+        df = pd.DataFrame(columns=columns)
+        df.to_csv(merge_articles_dir + "MentionSourceNames.csv", index=False, sep='\\')
+    else:
+        pd.concat(dfs_media).to_csv(merge_articles_dir + "MentionSourceNames.csv", index=False, sep='\\')

@@ -13,8 +13,7 @@ db.sqlite3-journal
 .ipynb_checkpoints
 
 .idea
-
-data/
+.vscode
 
 crawlingnews/NULL/articles/
 crawlingnews/NULL/txt/
@@ -22,11 +21,14 @@ crawlingnews/NULL/txt/
 export/
 mentions/
 merge/
+pnews/
 
 helper/SQLite.log
 helper/SQLiteTest.db
 
-pnews/
+nohup*
+main.sh
+
 
 
 

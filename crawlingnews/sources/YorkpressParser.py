@@ -10,7 +10,7 @@ class YorkpressParser(SourceParser):
             return None
         return head_tag[0].text
 
-    def get_author(self, soup: BeautifulSoup) -> None | str:
+    def get_authors(self, soup: BeautifulSoup) -> list[str]:
         author_tags = soup.select('.author-name')
         author_no_job_tags = soup.select('.author-no-job')
         author_no_image_tags = soup.select('.author-no-images')
@@ -24,9 +24,9 @@ class YorkpressParser(SourceParser):
             author_tag = author_no_image_tags[0]
 
         if author_tag is not None:
-            return author_tag.text.replace('By', '').strip()
+            return [self.process_author(author_tag.text)]
 
-        return None
+        return []
 
     def get_date(self, soup: BeautifulSoup) -> None | str:
         time_tag = soup.select('.mar-article__timestamp time')
@@ -34,12 +34,9 @@ class YorkpressParser(SourceParser):
             return None
 
         time_tag = time_tag[0]
-        datetime = time_tag.get('datetime')
-        if type(datetime) == list:
-            if len(datetime) == 0:
-                return None
-
-            datetime = datetime[0]
+        datetime = self.get_attr(time_tag, 'datetime')
+        if datetime is None:
+            return None
 
         # 将日期处理成YYYYMMDD的格式
         return datetime.split(' ')[0].replace('-', '')
@@ -53,7 +50,7 @@ class YorkpressParser(SourceParser):
         others = soup.select('#subscription-content p')
         for other in others:
             # 如果p标签内还有其他标签，直接跳过
-            if other.find():
+            if not self.only_a_in_p(other):
                 continue
 
             paragraphs.append(self.process_paragraph(other.text))

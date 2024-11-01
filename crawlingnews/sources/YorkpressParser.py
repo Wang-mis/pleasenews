@@ -44,11 +44,6 @@ class YorkpressParser(SourceParser):
         # 将日期处理成YYYYMMDD的格式
         return datetime.split(' ')[0].replace('-', '')
 
-    @staticmethod
-    def process_paragraph(p: str) -> str:
-        p = p.strip().replace('&nbsp;', ' ').replace('\xa0', ' ')
-        return re.sub(r'\s+', ' ', p).strip()
-
     def get_paragraphs(self, soup: BeautifulSoup) -> list[str]:
         paragraphs = []
         first = soup.select('p.article-first-paragraph')
